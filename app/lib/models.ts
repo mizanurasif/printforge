@@ -27,7 +27,8 @@ export type PillProps = {
 }
 
 export type ModelsGridProps = {
-    title: string
+    categoryName?: string
+    search?: string
     models: Model[]
 }
 
@@ -57,6 +58,8 @@ export type NavLinkProps = {
 }
 export type ModelsPageProps = {
     searchParams: {
-        query?: string
+        search?: string,
+        sort?: string,
+        page?: string
     }
 }
