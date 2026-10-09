@@ -12,32 +12,28 @@ export const authOptions:NextAuthOptions = {
                 email: { label: "Email", type: "text", },
                 password: { label: "Password", type: "password" }
         },
-        async authorize(credentials, req) {
+        async authorize(credentials) {
+            // Return null (not throw) on every failure so the login page
+            // can't tell "unknown email" apart from "wrong password"
             if(!credentials?.email || !credentials.password){
-                throw new Error("Missing email or password");
+                return null
             }
 
-            try
+            const user = getUserByEmail(credentials.email)
+            if(!user)
             {
-                const user = getUserByEmail(credentials.email)
-                if(!user)
-                {
-                    throw new Error('No user found');
-                }
-                const isValid = await bcrypt.compare(credentials.password,user.passwordHash)
-                if(!isValid)
-                {
-                    throw new Error('Invalid User');
-                }
-                return{
-                    id: String(user.id),
-                    email: user.email,
-                    name: user.name
-                }
-            } catch(error) {
-                throw error
+                return null
             }
-
+            const isValid = await bcrypt.compare(credentials.password,user.passwordHash)
+            if(!isValid)
+            {
+                return null
+            }
+            return{
+                id: String(user.id),
+                email: user.email,
+                name: user.name
+            }
         }
         })
     ],
@@ -49,7 +45,7 @@ export const authOptions:NextAuthOptions = {
             return token
         },
         async session({session,token}){
-            if(!session.user){
+            if(session.user){
                 session.user.id = token.id as string;
             }
             return session;
