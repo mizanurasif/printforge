@@ -7,13 +7,14 @@ export default async function LoginPage({ searchParams }: {
     searchParams: Promise<{ callbackUrl?: string, registered?: string }>
 }) {
     const { callbackUrl, registered } = await searchParams
-
+    console.log("callbackUrl:",callbackUrl);
     // Keep only the path part, so ?callbackUrl=https://evil.com can't redirect off-site
     let target = '/dashboard'
     if (callbackUrl) {
         try {
             const url = new URL(callbackUrl, 'http://localhost')
             target = url.pathname + url.search
+            console.log("target:",target);
         } catch {}
     }
     if (target.startsWith('/login') || target.startsWith('/register')) target = '/dashboard'

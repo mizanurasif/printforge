@@ -2,7 +2,8 @@
 
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import { createUser, getUserByEmail } from '../lib/user'
+import { createUser, getUserByEmail } from '../lib/database/user'
+
 
 const registerSchema = z.object({
     name: z.string().trim().min(2, 'Name must be at least 2 characters'),
@@ -15,6 +16,7 @@ export type RegisterState = {
     fieldErrors?: Partial<Record<'name' | 'email' | 'password', string[]>>
 }
 
+
 export async function registerUser(_prevState: RegisterState, formData: FormData): Promise<RegisterState> {
     const parsed = registerSchema.safeParse({
         name: formData.get('name'),
@@ -26,14 +28,17 @@ export async function registerUser(_prevState: RegisterState, formData: FormData
     }
 
     const { name, email, password } = parsed.data
-    if (getUserByEmail(email)) {
+    if (await getUserByEmail(email)) {
         return { error: 'Email already registered' }
     }
 
     try {
         await createUser(name, email, password)
-    } catch {
-        // UNIQUE constraint can still fire if two sign-ups race
+    } catch(err) {
+        // 23505 = unique_violation: two sign-ups with the same email at the same moment
+        if ((err as { code?: string }).code === '23505') {
+            return { error: 'Email already registered' }
+        }
         return { error: 'Could not create account. Please try again.' }
     }
 

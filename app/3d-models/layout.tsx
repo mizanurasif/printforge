@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 import CategoriesNav from "../components/CategoriesNav";
-import { getAllCategories } from "../lib/categories";
+import { getAllCategories } from "../lib/database/categories";
 
 export default async function ModelLayout({ children }: {children: ReactNode}) {
     const categories = await getAllCategories();

@@ -30,6 +30,9 @@ export default function ModelCard({ model }: ModelCardProps) {
                     <p className="text-gray-800 text-sm line-clamp-2 min-h-[2.5rem] leading-[1.25rem]">
                         {model.description}
                     </p>
+                    {model.creatorName && (
+                        <p className="mt-1 text-xs text-gray-500">by {model.creatorName}</p>
+                    )}
                     <div className="mt-2">
                         <Pill>{model.category}</Pill>
                     </div>

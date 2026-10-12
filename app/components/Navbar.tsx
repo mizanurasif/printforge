@@ -54,3 +54,74 @@ export default function Navbar(){
       </header>
    </>)
 } 
+
+
+/*
+const { data: session, status } = useSession();
+
+useSession() is a React hook from next-auth/react. It returns an object with this shape:
+
+{ data: Session | null, status: "loading" | "authenticated" | "unauthenticated", update: fn }
+
+The line uses destructuring with a rename:
+- data: session means "take the data property and call it session". It's purely for readability.
+- status is taken as it is.
+
+It's the same as:
+const result = useSession()
+const session = result.data
+const status = result.status
+
+The three status values
+
+┌───────────────────┬────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│      status       │        session         │                                                       Meaning                                                        │
+├───────────────────┼────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+│ "loading"         │ undefined              │ Still asking the server. The Navbar renders nothing (null), which avoids flashing "Login" for a moment before the    │
+│                   │                        │ name appears                                                                             │
+├───────────────────┼────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ "authenticated"   │ { user: {...}, expires │ Logged in. Show the na                                                                   │
+│                   │  }                     │                                                                                                                      │
+├───────────────────┼────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+│ "unauthenticated" │ null                   │ Logged out. Show Login + Register                                                                                    │
+└───────────────────┴────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Where it gets the data
+
+useSession() only works because <Providers> (the SessionProvider) wraps the app in layout.tsx. The provider calls GET /api/auth/session, which goes to your route.ts and
+then NextAuth(authOptions). The server decodes the cookie and returnsll shares that result. It also checks again when you switch back tothe browser tab.
+
+Does session.user.name come from authorize?
+
+Yes, but indirectly. It's copied at login time, stored in the JWT cookie, and read back from there:
+
+1. LOGIN (once)
+   authorize() returns { id: "1", name: "Test User", email: "..." }   ← your return
+        │
+        ▼
+   jwt({ token, user })   ← `user` = what authorize returned (only on
+     NextAuth automatically puts:  token.name, token.email, token.sub (= id)
+     your code adds:               token.id = user.id
+        │
+        ▼
+   token signed → stored in the cookie
+
+2. EVERY TIME (useSession / getServerSession)
+   cookie decoded → token
+        │
+        ▼
+   session({ session, token })
+     NextAuth automatically builds: session.user = { name: token.name}
+     your code adds:                session.user.id = token.id
+        │
+        ▼
+   useSession() → session.user.name  ✅
+
+- name and email are copied automatically by NextAuth's defaults. You didn't write code for them.
+- id is not copied automatically, which is why you wrote the jwt and hem, session.user.id would be undefined.
+- In the jwt callback, user only exists right after sign-in. On later calls it's undefined, which is why the code checks if (user) first.
+
+One side effect to know about
+
+The name is read from the cookie, not the database. If a user changeslater, the Navbar keeps showing the old name until they log out andback in, or until the token is refreshed with useSession().update(). If you build a "edit profile" feature, you'll need to handle that.
+*/

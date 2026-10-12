@@ -1,7 +1,7 @@
 
 import  { NextAuthOptions } from "next-auth"
 import  CredentialsProvider  from "next-auth/providers/credentials"
-import { getUserByEmail } from "./user";
+import { getUserByEmail } from "./database/user";
 import bcrypt from "bcryptjs";
 
 export const authOptions:NextAuthOptions = {
@@ -19,7 +19,7 @@ export const authOptions:NextAuthOptions = {
                 return null
             }
 
-            const user = getUserByEmail(credentials.email)
+            const user = await getUserByEmail(credentials.email)
             if(!user)
             {
                 return null

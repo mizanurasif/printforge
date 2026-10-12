@@ -1,8 +1,8 @@
 import ModelsBrowser from '@/app/components/ModelsBrowser';
 import ModelsGrid from '@/app/components/ModelsGrid';
-import { getCategoryBySlug, getModelsByCategorySlug } from '@/app/lib/categories';
+import { getCategoryBySlug } from '@/app/lib/database/categories';
 import { MODELS_PER_PAGE } from '@/app/lib/constants';
-import { getmodelcount, getModels } from '@/app/lib/database';
+import { getmodelcount, getModels } from '@/app/lib/database/database';
 import { CategoryPageProps, Model} from '@/app/lib/models'
 import { notFound } from 'next/navigation';
 export default async function categoryPage({ params, searchParams}:
@@ -19,8 +19,8 @@ export default async function categoryPage({ params, searchParams}:
         notFound()
     }
 
-    const modelCount = Math.ceil(await getmodelcount({categorySlug,search}) / MODELS_PER_PAGE)
-    console.log(modelCount)
+    const totalPages = Math.max(Math.ceil(await getmodelcount({categorySlug,search}) / MODELS_PER_PAGE), 1)
+    console.log(totalPages)
     const models = await getModels({categorySlug,search,sort,page,modelsPerPage:MODELS_PER_PAGE});
 
     return(
@@ -28,7 +28,7 @@ export default async function categoryPage({ params, searchParams}:
         <ModelsBrowser categoryName={category.displayName}
         models = {models}
         search={search}
-        totalPages={modelCount}
+        totalPages={totalPages}
         currentPage={page}
         />
         </>

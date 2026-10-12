@@ -7,7 +7,9 @@ export interface Model {
   likes: number
   image: string
   category: string
-  dateAdded: string
+  dateAdded: Date
+  userId: number | null
+  creatorName: string | null
 }
 
 export type ModelDetailPageProps = {
@@ -27,6 +29,7 @@ export type PillProps = {
 }
 
 export type ModelsGridProps = {
+    
     categoryName?: string
     search?: string
     models: Model[]
@@ -57,9 +60,9 @@ export type NavLinkProps = {
     children: ReactNode
 }
 export type ModelsPageProps = {
-    searchParams: {
+    searchParams: Promise<{
         search?: string,
         sort?: string,
         page?: string
-    }
+    }>
 }

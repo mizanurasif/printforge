@@ -1,9 +1,7 @@
 import { redirect } from 'next/navigation';
 import ModelsBrowser from '../components/ModelsBrowser';
-import ModelsGrid from '../components/ModelsGrid';
-import SearchForm from '../components/SearchForm';
 import { MODELS_PER_PAGE } from '../lib/constants';
-import { getmodelcount, getModels } from '../lib/database';
+import { getmodelcount, getModels } from '../lib/database/database';
 import { ModelsPageProps } from '../lib/models';
 
 export default async function Page({searchParams} : ModelsPageProps) {
