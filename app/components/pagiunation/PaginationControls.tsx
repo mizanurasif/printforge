@@ -1,5 +1,5 @@
 import { TransitionStartFunction } from 'react'
-import PaginationButton from '../components/PaginationButton'
+import PaginationButton from './PaginationButton'
 
 export default function PaginationControls({totalPages,currentPage,startTransition}: {
     totalPages: number,

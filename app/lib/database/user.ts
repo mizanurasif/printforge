@@ -19,6 +19,16 @@ export async function getUserById(id: number): Promise<User | undefined> {
     return user
 }
 
+export type PublicUser = { id: number; name: string; createdAt: Date }
+
+// For public pages: only the fields anyone may see (no email, no password hash)
+export async function getPublicUserById(id: number): Promise<PublicUser | undefined> {
+    const [user] = await sql<PublicUser[]>`
+        SELECT id, name, created_at FROM users WHERE id = ${id}
+    `
+    return user
+}
+
 // Deletes the user and all their models in one transaction.
 // Returns the deleted models' image paths (so the files can be removed), or null if the user didn't exist
 export async function deleteUser(id: number): Promise<string[] | null> {

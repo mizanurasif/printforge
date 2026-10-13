@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import RegisterForm from '../components/RegisterForm'
+import RegisterForm from '../components/account/RegisterForm'
 import { authOptions } from '../lib/auth'
 
 export default async function RegisterPage() {

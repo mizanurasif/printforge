@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useActionState } from 'react'
-import { registerUser, type RegisterState } from '../register/actions'
+import { registerUser, type RegisterState } from '../../register/actions'
 
 const initialState: RegisterState = {}
 

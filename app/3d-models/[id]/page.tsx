@@ -62,7 +62,14 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
           <footer className="text-sm text-gray-500">
             {model.creatorName && (
               <p className="mb-1">
-                Created by <span className="font-medium text-gray-700">{model.creatorName}</span>
+                Created by{' '}
+                {model.userId ? (
+                  <Link href={`/user/${model.userId}`} className="font-medium text-gray-700 hover:text-orange-accent hover:underline">
+                    {model.creatorName}
+                  </Link>
+                ) : (
+                  <span className="font-medium text-gray-700">{model.creatorName}</span>
+                )}
               </p>
             )}
             <time dateTime={model.dateAdded.toISOString()}>

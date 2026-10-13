@@ -1,10 +1,10 @@
 'use client'
 
-import SearchForm from '../components/SearchForm'
-import ModelsGrid from '../components/ModelsGrid'
-import PaginationControls from "./PaginationControls"
+import SearchForm from '@/app/components/SearchForm'
+import ModelsGrid from '@/app/components/Model/ModelsGrid'
+import PaginationControls from '@/app/components/pagiunation/PaginationControls'
 import {useTransition} from 'react'
-import { Model } from '../lib/models'
+import { Model } from '@/app/lib/models'
 
 export default function ModelsBrowser({search, models, categoryName, totalPages,currentPage}:{
   search?:string,

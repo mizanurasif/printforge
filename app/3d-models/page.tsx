@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import ModelsBrowser from '../components/ModelsBrowser';
+import ModelsBrowser from '../components/Model/ModelsBrowser';
 import { MODELS_PER_PAGE } from '../lib/constants';
 import { getmodelcount, getModels } from '../lib/database/database';
 import { ModelsPageProps } from '../lib/models';

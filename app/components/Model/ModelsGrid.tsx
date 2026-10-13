@@ -1,10 +1,10 @@
-import ModelCard from "@/app/components/ModelCard"
+import ModelCard from "@/app/components/Model/ModelCard"
 import { Model } from "@/app/lib/models"
-import SortControls from "./SortControls"
+import SortControls from "../SortControls"
 import type {TransitionStartFunction} from 'react'
-import LoadingUI from "./LoadingUI"
-import NotFoundUI from "./NotFoundUI"
-import PaginationControls from "./PaginationControls"
+import LoadingUI from "../LoadingUI"
+import NotFoundUI from "../NotFoundUI"
+
 
 
 export default function ModelsGrid({ models, categoryName, search, isPending, startTransition }: {
