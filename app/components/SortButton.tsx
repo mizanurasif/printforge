@@ -1,9 +1,9 @@
 'use client'
 
 import {usePathname, useRouter, useSearchParams} from 'next/navigation'
-import { startTransition, TransitionStartFunction } from 'react'
+import { TransitionStartFunction } from 'react'
 
-export default function SortButton({children, sort}:{
+export default function SortButton({children, sort,startTransition}:{
   children:React.ReactNode,
   sort:string,
   startTransition: TransitionStartFunction
@@ -14,7 +14,6 @@ export default function SortButton({children, sort}:{
     const searchParams = useSearchParams()
 
     const isActive = searchParams.get("sort") === sort
-    console.log(searchParams)
 
     function handleSort(){
     const urlSearchParams = new URLSearchParams(searchParams.toString())

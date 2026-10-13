@@ -1,10 +1,10 @@
-import ModelsBrowser from '@/app/components/ModelsBrowser';
-import ModelsGrid from '@/app/components/ModelsGrid';
-import { getCategoryBySlug, getModelsByCategorySlug } from '@/app/lib/categories';
+import ModelsBrowser from '@/app/components/Model/ModelsBrowser';
+import { getCategoryBySlug } from '@/app/lib/database/categories';
 import { MODELS_PER_PAGE } from '@/app/lib/constants';
-import { getmodelcount, getModels } from '@/app/lib/database';
-import { CategoryPageProps, Model} from '@/app/lib/models'
+import { getmodelcount, getModels } from '@/app/lib/database/database';
 import { notFound } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/lib/auth';
 export default async function categoryPage({ params, searchParams}:
                                         { params: Promise<{ categoryName: string }>,
                                           searchParams: Promise<{ search?: string, sort?: string, page?:string}>}) {
@@ -19,16 +19,17 @@ export default async function categoryPage({ params, searchParams}:
         notFound()
     }
 
-    const modelCount = Math.ceil(await getmodelcount({categorySlug,search}) / MODELS_PER_PAGE)
-    console.log(modelCount)
-    const models = await getModels({categorySlug,search,sort,page,modelsPerPage:MODELS_PER_PAGE});
+    const totalPages = Math.max(Math.ceil(await getmodelcount({categorySlug,search}) / MODELS_PER_PAGE), 1)
+    console.log(totalPages)
+    const session = await getServerSession(authOptions)
+    const models = await getModels({categorySlug,search,sort,page,modelsPerPage:MODELS_PER_PAGE, viewerId: Number(session?.user.id) || undefined});
 
     return(
         <>
         <ModelsBrowser categoryName={category.displayName}
         models = {models}
         search={search}
-        totalPages={modelCount}
+        totalPages={totalPages}
         currentPage={page}
         />
         </>
