@@ -8,7 +8,7 @@ import { Model } from './models'
 
 const PLACEHOLDER_IMAGE = '/img/placeholder.png'
 
-const dummyModels: Omit<Model, 'userId' | 'creatorName'>[] = [
+const dummyModels: Omit<Model, 'userId' | 'creatorName' | 'likedByMe'>[] = [
     {
         id: 1,
         name: 'Articulated Dragon',
@@ -57,5 +57,5 @@ const dummyModels: Omit<Model, 'userId' | 'creatorName'>[] = [
 ]
 
 export async function getMyModels(userId: number, userName: string): Promise<Model[]> {
-    return dummyModels.map((model) => ({ ...model, userId, creatorName: userName }))
+    return dummyModels.map((model) => ({ ...model, userId, creatorName: userName, likedByMe: false }))
 }

@@ -4,12 +4,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { FaPen } from "react-icons/fa6"
 import DeleteModelButton from "@/app/components/dashboard/DeleteModelButton"
+import LikeButton from "@/app/components/Model/LikeButton"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/lib/auth"
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
  
-    const model = await getModelById((await params).id)
     const session = await getServerSession(authOptions)
+    const model = await getModelById((await params).id, Number(session?.user.id) || undefined)
     const isOwner = session && model.userId === Number(session.user.id)
     return (
     <div className="container max-w-6xl px-4 py-8 mx-auto">
@@ -25,12 +26,9 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
         </figure>
 
         <section className="flex flex-col justify-center h-full">
-          <div
-            className="flex items-center mb-2 text-2xl text-gray-600"
-            role="status"
-            aria-label="Likes count"
-          >
-            <span className="font-light" aria-label="model likes">&hearts; {model.likes}</span>
+          <div className="flex items-center mb-2 text-2xl text-gray-600">
+            <LikeButton modelId={model.id} initialLikes={model.likes} initialLiked={model.likedByMe}
+              className="font-light" iconClassName="w-6 h-6" />
           </div>
           <h1 className="mb-6 text-4xl font-bold">{model.name}</h1>
 

@@ -32,7 +32,7 @@ export default async function UserProfilePage({ params }: UserPageProps) {
     const user = await getPublicUserById(userId)
     if (!user) notFound()
 
-    const models = await getUserModelsByID(userId)
+    const models = await getUserModelsByID(userId, Number(session?.user.id) || undefined)
     const totalLikes = models.reduce((sum, model) => sum + model.likes, 0)
     const topModel = models[0] ?? null      // getUserModelsByID sorts by likes, most first
 

@@ -10,6 +10,7 @@ export interface Model {
   dateAdded: Date
   userId: number | null
   creatorName: string | null
+  likedByMe: boolean      // whether the logged-in viewer liked it (false when logged out)
 }
 
 export type ModelDetailPageProps = {

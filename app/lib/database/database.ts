@@ -27,15 +27,23 @@ function orderByClause(sort?: string) {
     }
 }
 
-export async function getModels({ categorySlug, search, sort, page, modelsPerPage }: {
+// Adds liked_by_me to a query over "models m": whether viewerId has liked each model
+export function likedByMe(viewerId?: number) {
+    return viewerId
+        ? sql`EXISTS (SELECT 1 FROM likes l WHERE l.model_id = m.id AND l.user_id = ${viewerId}) AS liked_by_me`
+        : sql`FALSE AS liked_by_me`
+}
+
+export async function getModels({ categorySlug, search, sort, page, modelsPerPage, viewerId }: {
     categorySlug?: string
     search?: string
     sort?: string
     page: number
     modelsPerPage: number
+    viewerId?: number
 }): Promise<Model[]> {
     return await sql<Model[]>`
-        SELECT m.*, u.name AS creator_name
+        SELECT m.*, u.name AS creator_name, ${likedByMe(viewerId)}
         FROM models m
         LEFT JOIN users u ON u.id = m.user_id
         ${whereClause({ categorySlug, search })}
@@ -44,7 +52,7 @@ export async function getModels({ categorySlug, search, sort, page, modelsPerPag
     `
 }
 
-export async function getModelById(id: string | number): Promise<Model> {
+export async function getModelById(id: string | number, viewerId?: number): Promise<Model> {
     const modelId = Number(id)
     // "/3d-models/abc" would otherwise crash Postgres with "invalid input syntax for type integer"
     if (!Number.isInteger(modelId)) {
@@ -52,7 +60,7 @@ export async function getModelById(id: string | number): Promise<Model> {
     }
 
     const [model] = await sql<Model[]>`
-        SELECT m.*, u.name AS creator_name
+        SELECT m.*, u.name AS creator_name, ${likedByMe(viewerId)}
         FROM models m
         LEFT JOIN users u ON u.id = m.user_id
         WHERE m.id = ${modelId}

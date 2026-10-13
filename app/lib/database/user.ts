@@ -2,6 +2,7 @@ import 'server-only'
 import sql from './db'
 import bcrypt from 'bcryptjs'
 import { Model } from '../models';
+import { likedByMe } from './database';
 
 export type User = { id: number; name: string; email: string; passwordHash: string; createdAt: Date }
 
@@ -51,9 +52,9 @@ export async function createUser(name: string, email: string, password: string) 
     return user
 }
 
-export async function  getUserModelsByID(userID:number) {
+export async function  getUserModelsByID(userID:number, viewerId?: number) {
     const userModels = await sql<Model[]>`
-        SELECT u.name AS creator_name , m.*
+        SELECT u.name AS creator_name , m.*, ${likedByMe(viewerId)}
         FROM users u 
         JOIN models m ON u.id = m.user_id
         WHERE u.id = ${userID}::int
