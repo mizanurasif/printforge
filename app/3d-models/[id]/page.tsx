@@ -1,10 +1,10 @@
 import type { ModelDetailPageProps } from "@/app/lib/models"
 import { getModelById } from "@/app/lib/database/database"
-import Image from "next/image"
 import Link from "next/link"
 import { FaPen } from "react-icons/fa6"
 import DeleteModelButton from "@/app/components/dashboard/DeleteModelButton"
 import LikeButton from "@/app/components/Model/LikeButton"
+import ModelPreview from "@/app/components/Model/ModelPreview"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/lib/auth"
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
@@ -15,15 +15,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
     return (
     <div className="container max-w-6xl px-4 py-8 mx-auto">
       <article className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <figure className="relative overflow-hidden rounded-lg shadow-lg aspect-square">
-          <Image
-            width={500}
-            height={500}
-            src={model.image}
-            alt={model.name}
-            className="absolute inset-0 object-cover w-full h-full"
-          />
-        </figure>
+        <ModelPreview image={model.image} modelFile={model.modelFile} name={model.name} />
 
         <section className="flex flex-col justify-center h-full">
           <div className="flex items-center mb-2 text-2xl text-gray-600">

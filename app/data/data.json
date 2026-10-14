@@ -1,470 +1,472 @@
 [
     {
         "id": 1,
-        "name": "Articulated Dragon",
-        "description": "A detailed dragon model with movable joints and wings",
+        "name": "Carved Wooden Elephant",
+        "description": "Hand-carved wooden elephant figurine with a raised trunk and detailed grain",
         "likes": 0,
-        "image": "/img/models/1.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-03-15T14:30:00Z"
+        "image": "/img/thumbnails/animals-pets/carved_wooden_elephant.png",
+        "modelFile": "/models/animals-pets/carved_wooden_elephant.glb",
+        "category": "animals-pets",
+        "dateAdded": "2024-01-10T09:00:00Z"
     },
     {
         "id": 2,
-        "name": "Succulent Planter",
-        "description": "Geometric planter perfect for small succulents",
+        "name": "Concrete Cat Statue",
+        "description": "Sitting cat statue with a cast-concrete finish, for shelves or the garden",
         "likes": 0,
-        "image": "/img/models/2.jpg",
-        "category": "household",
-        "dateAdded": "2023-06-22T09:15:00Z"
+        "image": "/img/thumbnails/animals-pets/concrete_cat_statue.png",
+        "modelFile": "/models/animals-pets/concrete_cat_statue.glb",
+        "category": "animals-pets",
+        "dateAdded": "2024-07-25T04:11:00Z"
     },
     {
         "id": 3,
-        "name": "Cosplay Helmet",
-        "description": "Sci-fi inspired helmet for costume making",
+        "name": "Fox",
+        "description": "Low-poly fox with a stylised look, a classic test model for 3D viewers",
         "likes": 0,
-        "image": "/img/models/3.jpg",
-        "category": "props-cosplay",
-        "dateAdded": "2023-09-05T16:45:00Z"
+        "image": "/img/thumbnails/animals-pets/Fox.png",
+        "modelFile": "/models/animals-pets/Fox.glb",
+        "category": "animals-pets",
+        "dateAdded": "2025-02-06T23:23:00Z"
     },
     {
         "id": 4,
-        "name": "Educational Solar System",
-        "description": "Scale model of the solar system for classroom use",
+        "name": "Red Deer Stag",
+        "description": "Realistic standing stag with a full set of branching antlers",
         "likes": 0,
-        "image": "/img/models/4.jpg",
-        "category": "education",
-        "dateAdded": "2023-11-30T11:20:00Z"
+        "image": "/img/thumbnails/animals-pets/deer_-_realistic_3d_model_demo_free.png",
+        "modelFile": "/models/animals-pets/deer_-_realistic_3d_model_demo_free.glb",
+        "category": "animals-pets",
+        "dateAdded": "2025-05-14T10:20:00Z"
     },
     {
         "id": 5,
-        "name": "Abstract Sculpture",
-        "description": "Modern art piece with flowing curves",
+        "name": "Saddled Horse",
+        "description": "Realistic horse model with saddle and bridle details",
         "likes": 0,
-        "image": "/img/models/5.jpg",
-        "category": "art",
-        "dateAdded": "2024-01-18T13:40:00Z"
+        "image": "/img/thumbnails/animals-pets/horse_-_realistic_3d_model_demo_free.png",
+        "modelFile": "/models/animals-pets/horse_-_realistic_3d_model_demo_free.glb",
+        "category": "animals-pets",
+        "dateAdded": "2024-11-03T15:42:00Z"
     },
     {
         "id": 6,
-        "name": "Tool Holder",
-        "description": "Customizable holder for workshop tools",
+        "name": "Lioness",
+        "description": "Realistic lioness in a calm standing pose, great as a desk figurine",
         "likes": 0,
-        "image": "/img/models/6.jpg",
-        "category": "tools",
-        "dateAdded": "2024-03-07T10:25:00Z"
+        "image": "/img/thumbnails/animals-pets/lioness_-_realistic_3d_model_demo_free.png",
+        "modelFile": "/models/animals-pets/lioness_-_realistic_3d_model_demo_free.glb",
+        "category": "animals-pets",
+        "dateAdded": "2026-02-18T08:05:00Z"
     },
     {
         "id": 7,
-        "name": "Fantasy Miniature",
-        "description": "Detailed warrior miniature for tabletop gaming",
+        "name": "Large Castle Door",
+        "description": "Heavy medieval castle door with iron studs, bands and hinges",
         "likes": 0,
-        "image": "/img/models/7.jpg",
-        "category": "miniatures",
-        "dateAdded": "2024-05-12T15:50:00Z"
+        "image": "/img/thumbnails/architecture/large_castle_door.png",
+        "modelFile": "/models/architecture/large_castle_door.glb",
+        "category": "architecture",
+        "dateAdded": "2026-03-07T13:47:00Z"
     },
     {
         "id": 8,
-        "name": "Bracelet Maker",
-        "description": "Tool for creating custom jewelry",
+        "name": "Modular Fort",
+        "description": "Stone fort section with walls and battlements, built from modular pieces",
         "likes": 0,
-        "image": "/img/models/8.jpg",
-        "category": "fashion",
-        "dateAdded": "2024-07-25T08:35:00Z"
+        "image": "/img/thumbnails/architecture/modular_fort_01.png",
+        "modelFile": "/models/architecture/modular_fort_01.glb",
+        "category": "architecture",
+        "dateAdded": "2026-09-20T08:59:00Z"
     },
     {
         "id": 9,
-        "name": "Printer Upgrade Kit",
-        "description": "Enhancement parts for 3D printer performance",
+        "name": "Japanese Shrine",
+        "description": "Traditional Japanese temple with a curved tiled roof and red timber frame",
         "likes": 0,
-        "image": "/img/models/9.jpg",
-        "category": "3d-printer",
-        "dateAdded": "2024-09-14T12:15:00Z"
+        "image": "/img/thumbnails/architecture/japanese_shrine_-_traditional_temple.png",
+        "modelFile": "/models/architecture/japanese_shrine_-_traditional_temple.glb",
+        "category": "architecture",
+        "dateAdded": "2025-08-09T12:30:00Z"
     },
     {
         "id": 10,
-        "name": "Garden Tool Set",
-        "description": "Collection of tools for gardening enthusiasts",
+        "name": "Medieval Timber Cottage",
+        "description": "Two-storey half-timbered cottage with a shingle roof and front steps",
         "likes": 0,
-        "image": "/img/models/10.jpg",
-        "category": "hobby-diy",
-        "dateAdded": "2024-11-03T17:40:00Z"
+        "image": "/img/thumbnails/architecture/medieval_timber_cottage_-_hitem3d_vs_supavoxel.png",
+        "modelFile": "/models/architecture/medieval_timber_cottage_-_hitem3d_vs_supavoxel.glb",
+        "category": "architecture",
+        "dateAdded": "2024-04-27T17:15:00Z"
     },
     {
         "id": 11,
-        "name": "Chess Set",
-        "description": "Modern interpretation of classic chess pieces",
+        "name": "Gothic Statue",
+        "description": "Weathered gothic stone statue of a robed figure",
         "likes": 0,
-        "image": "/img/models/11.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-02-28T14:20:00Z"
+        "image": "/img/thumbnails/art-abstract/gothic_statue.png",
+        "modelFile": "/models/art-abstract/gothic_statue.glb",
+        "category": "art-abstract",
+        "dateAdded": "2024-06-27T01:27:00Z"
     },
     {
         "id": 12,
-        "name": "Wall Organizer",
-        "description": "Modular system for wall storage",
+        "name": "Iridescent Suzanne",
+        "description": "Blender's Suzanne monkey head with a shimmering, colour-shifting finish",
         "likes": 0,
-        "image": "/img/models/12.jpg",
-        "category": "household",
-        "dateAdded": "2023-05-17T11:30:00Z"
+        "image": "/img/thumbnails/art-abstract/IridescenceSuzanne.png",
+        "modelFile": "/models/art-abstract/IridescenceSuzanne.glb",
+        "category": "art-abstract",
+        "dateAdded": "2025-01-09T20:39:00Z"
     },
     {
         "id": 13,
-        "name": "Prop Sword",
-        "description": "Fantasy sword for costume play",
+        "name": "Marble Bust",
+        "description": "Classical marble bust in the style of ancient Roman sculpture",
         "likes": 0,
-        "image": "/img/models/13.jpg",
-        "category": "props-cosplay",
-        "dateAdded": "2023-08-09T16:05:00Z"
+        "image": "/img/thumbnails/art-abstract/marble_bust_01.png",
+        "modelFile": "/models/art-abstract/marble_bust_01.glb",
+        "category": "art-abstract",
+        "dateAdded": "2025-07-25T15:51:00Z"
     },
     {
         "id": 14,
-        "name": "Molecular Model",
-        "description": "Educational model of molecular structures",
+        "name": "Covered Car",
+        "description": "Car hidden under a fitted dust cover, ready for a garage diorama",
         "likes": 0,
-        "image": "/img/models/14.jpg",
-        "category": "education",
-        "dateAdded": "2023-10-22T09:45:00Z"
+        "image": "/img/thumbnails/cars-vehicles/covered_car.png",
+        "modelFile": "/models/cars-vehicles/covered_car.glb",
+        "category": "cars-vehicles",
+        "dateAdded": "2026-02-07T11:03:00Z"
     },
     {
         "id": 15,
-        "name": "Geometric Wall Art",
-        "description": "Decorative wall panels with geometric patterns",
+        "name": "Dutch Sailing Ship",
+        "description": "Medium Dutch sailing ship with masts, rigging and a detailed wooden hull",
         "likes": 0,
-        "image": "/img/models/15.jpg",
-        "category": "art",
-        "dateAdded": "2024-01-05T15:25:00Z"
+        "image": "/img/thumbnails/cars-vehicles/dutch_ship_medium.png",
+        "modelFile": "/models/cars-vehicles/dutch_ship_medium.glb",
+        "category": "cars-vehicles",
+        "dateAdded": "2026-08-23T06:15:00Z"
     },
     {
         "id": 16,
-        "name": "Screwdriver Set",
-        "description": "Custom handles for precision screwdrivers",
+        "name": "Toy Car",
+        "description": "Small toy car with glossy paint, chrome trim and a fabric interior",
         "likes": 0,
-        "image": "/img/models/16.jpg",
-        "category": "tools",
-        "dateAdded": "2024-02-19T10:50:00Z"
+        "image": "/img/thumbnails/cars-vehicles/ToyCar.png",
+        "modelFile": "/models/cars-vehicles/ToyCar.glb",
+        "category": "cars-vehicles",
+        "dateAdded": "2024-05-29T22:42:00Z"
     },
     {
         "id": 17,
-        "name": "Dragon Miniature",
-        "description": "Detailed dragon for tabletop gaming",
+        "name": "Peugeot 206 WRC",
+        "description": "Rally car replica of the Peugeot 206 WRC in its Total livery",
         "likes": 0,
-        "image": "/img/models/17.jpg",
-        "category": "miniatures",
-        "dateAdded": "2024-04-30T13:15:00Z"
+        "image": "/img/thumbnails/cars-vehicles/peugeot_206_wrc__www.vecarz.com.png",
+        "modelFile": "/models/cars-vehicles/peugeot_206_wrc__www.vecarz.com.glb",
+        "category": "cars-vehicles",
+        "dateAdded": "2025-01-22T19:48:00Z"
     },
     {
         "id": 18,
-        "name": "Earring Collection",
-        "description": "Set of geometric earring designs",
+        "name": "Hyundai i20 WRC 2017",
+        "description": "Rally car replica of the 2017 Hyundai i20 Coupe WRC",
         "likes": 0,
-        "image": "/img/models/18.jpg",
-        "category": "fashion",
-        "dateAdded": "2024-06-14T08:40:00Z"
+        "image": "/img/thumbnails/cars-vehicles/wrc_hyundai_i20_2017__www.vecarz.com.png",
+        "modelFile": "/models/cars-vehicles/wrc_hyundai_i20_2017__www.vecarz.com.glb",
+        "category": "cars-vehicles",
+        "dateAdded": "2026-06-11T07:36:00Z"
     },
     {
         "id": 19,
-        "name": "Cooling System",
-        "description": "Enhanced cooling solution for 3D printers",
+        "name": "Corset",
+        "description": "Laced corset with fabric panels and stitching detail",
         "likes": 0,
-        "image": "/img/models/19.jpg",
-        "category": "3d-printer",
-        "dateAdded": "2024-08-27T12:55:00Z"
+        "image": "/img/thumbnails/fashion-style/Corset.png",
+        "modelFile": "/models/fashion-style/Corset.glb",
+        "category": "fashion-style",
+        "dateAdded": "2024-12-12T17:54:00Z"
     },
     {
         "id": 20,
-        "name": "Birdhouse Kit",
-        "description": "DIY birdhouse with modern design",
+        "name": "Sneaker",
+        "description": "Sneaker with a textured sole and several colour variants",
         "likes": 0,
-        "image": "/img/models/20.jpg",
-        "category": "hobby-diy",
-        "dateAdded": "2024-10-11T17:20:00Z"
+        "image": "/img/thumbnails/fashion-style/MaterialsVariantsShoe.png",
+        "modelFile": "/models/fashion-style/MaterialsVariantsShoe.glb",
+        "category": "fashion-style",
+        "dateAdded": "2026-01-10T08:18:00Z"
     },
     {
         "id": 21,
-        "name": "Robot Toy",
-        "description": "Articulated robot with moving parts",
+        "name": "Gold Engagement Ring",
+        "description": "Gold engagement ring with a cluster setting of round stones",
         "likes": 0,
-        "image": "/img/models/21.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-01-25T14:10:00Z"
+        "image": "/img/thumbnails/fashion-style/bbrg043_goldring_wedding_engagement_luxury.png",
+        "modelFile": "/models/fashion-style/bbrg043_goldring_wedding_engagement_luxury.glb",
+        "category": "fashion-style",
+        "dateAdded": "2025-10-30T14:10:00Z"
     },
     {
         "id": 22,
-        "name": "Kitchen Organizer",
-        "description": "Customizable drawer organization system",
+        "name": "Strappy Platform Heels",
+        "description": "Pair of high-heeled shoes with buckled straps and studded toes",
         "likes": 0,
-        "image": "/img/models/22.jpg",
-        "category": "household",
-        "dateAdded": "2023-04-08T11:35:00Z"
+        "image": "/img/thumbnails/fashion-style/heels.png",
+        "modelFile": "/models/fashion-style/heels.glb",
+        "category": "fashion-style",
+        "dateAdded": "2024-09-16T11:25:00Z"
     },
     {
         "id": 23,
-        "name": "Mask Template",
-        "description": "Base template for custom costume masks",
+        "name": "Stylized High-Top Sneaker",
+        "description": "High-top sneaker with a chunky sole and velcro strap",
         "likes": 0,
-        "image": "/img/models/23.jpg",
-        "category": "props-cosplay",
-        "dateAdded": "2023-07-21T16:00:00Z"
+        "image": "/img/thumbnails/fashion-style/stylized_sneaker.png",
+        "modelFile": "/models/fashion-style/stylized_sneaker.glb",
+        "category": "fashion-style",
+        "dateAdded": "2026-03-05T16:50:00Z"
     },
     {
         "id": 24,
-        "name": "DNA Model",
-        "description": "Educational DNA double helix model",
+        "name": "Avocado",
+        "description": "Halved avocado showing its pit and creamy green flesh",
         "likes": 0,
-        "image": "/img/models/24.jpg",
-        "category": "education",
-        "dateAdded": "2023-09-30T09:25:00Z"
+        "image": "/img/thumbnails/food-drink/Avocado.png",
+        "modelFile": "/models/food-drink/Avocado.glb",
+        "category": "food-drink",
+        "dateAdded": "2026-07-26T03:30:00Z"
     },
     {
         "id": 25,
-        "name": "Modern Vase",
-        "description": "Contemporary vase with unique patterns",
+        "name": "Croissant",
+        "description": "Golden, flaky croissant fresh from the bakery",
         "likes": 0,
-        "image": "/img/models/25.jpg",
-        "category": "art",
-        "dateAdded": "2023-12-13T15:50:00Z"
+        "image": "/img/thumbnails/food-drink/croissant.png",
+        "modelFile": "/models/food-drink/croissant.glb",
+        "category": "food-drink",
+        "dateAdded": "2024-05-01T19:58:00Z"
     },
     {
         "id": 26,
-        "name": "Wrench Set",
-        "description": "Custom sized wrench collection",
+        "name": "Strawberry Chocolate Cake",
+        "description": "Chocolate cake topped with fresh strawberries",
         "likes": 0,
-        "image": "/img/models/26.jpg",
-        "category": "tools",
-        "dateAdded": "2024-02-26T10:15:00Z"
+        "image": "/img/thumbnails/food-drink/strawberry_chocolate_cake.png",
+        "modelFile": "/models/food-drink/strawberry_chocolate_cake.glb",
+        "category": "food-drink",
+        "dateAdded": "2024-11-14T15:10:00Z"
     },
     {
         "id": 27,
-        "name": "Castle Miniature",
-        "description": "Detailed medieval castle for gaming",
+        "name": "Slim Soda Cans",
+        "description": "Set of six slim 250ml soda cans in classic brand designs",
         "likes": 0,
-        "image": "/img/models/27.jpg",
-        "category": "miniatures",
-        "dateAdded": "2024-04-09T13:40:00Z"
+        "image": "/img/thumbnails/food-drink/soda_cans_-_slim_250ml__free_download.png",
+        "modelFile": "/models/food-drink/soda_cans_-_slim_250ml__free_download.glb",
+        "category": "food-drink",
+        "dateAdded": "2025-07-02T09:12:00Z"
     },
     {
         "id": 28,
-        "name": "Pendant Design",
-        "description": "Customizable pendant template",
+        "name": "Glam Velvet Sofa",
+        "description": "Velvet sofa with soft cushions and a glamorous finish",
         "likes": 0,
-        "image": "/img/models/28.jpg",
-        "category": "fashion",
-        "dateAdded": "2024-06-22T08:05:00Z"
+        "image": "/img/thumbnails/furniture-home/GlamVelvetSofa.png",
+        "modelFile": "/models/furniture-home/GlamVelvetSofa.glb",
+        "category": "furniture-home",
+        "dateAdded": "2025-05-30T10:22:00Z"
     },
     {
         "id": 29,
-        "name": "Extruder Upgrade",
-        "description": "Enhanced extruder mechanism",
+        "name": "Street Lantern",
+        "description": "Old street lantern hanging from a weathered metal post",
         "likes": 0,
-        "image": "/img/models/29.jpg",
-        "category": "3d-printer",
-        "dateAdded": "2024-08-05T12:30:00Z"
+        "image": "/img/thumbnails/furniture-home/Lantern.png",
+        "modelFile": "/models/furniture-home/Lantern.glb",
+        "category": "furniture-home",
+        "dateAdded": "2025-12-13T05:34:00Z"
     },
     {
         "id": 30,
-        "name": "Plant Stand",
-        "description": "Modern stand for indoor plants",
+        "name": "Upholstered Chair",
+        "description": "Upholstered chair with a soft fabric sheen and wooden legs",
         "likes": 0,
-        "image": "/img/models/30.jpg",
-        "category": "hobby-diy",
-        "dateAdded": "2024-10-18T17:55:00Z"
+        "image": "/img/thumbnails/furniture-home/SheenChair.png",
+        "modelFile": "/models/furniture-home/SheenChair.glb",
+        "category": "furniture-home",
+        "dateAdded": "2026-06-28T00:46:00Z"
     },
     {
         "id": 31,
-        "name": "Puzzle Cube",
-        "description": "Complex mechanical puzzle toy",
+        "name": "Leafy Plant",
+        "description": "Potted plant with thin leaves that let the light shine through",
         "likes": 0,
-        "image": "/img/models/31.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-01-12T14:00:00Z"
+        "image": "/img/thumbnails/plants-garden/DiffuseTransmissionPlant.png",
+        "modelFile": "/models/plants-garden/DiffuseTransmissionPlant.glb",
+        "category": "plants-garden",
+        "dateAdded": "2024-04-03T17:13:00Z"
     },
     {
         "id": 32,
-        "name": "Bathroom Caddy",
-        "description": "Shower organization solution",
+        "name": "Glass Vase with Flowers",
+        "description": "Clear glass vase holding a small bouquet of flowers",
         "likes": 0,
-        "image": "/img/models/32.jpg",
-        "category": "household",
-        "dateAdded": "2023-03-25T11:25:00Z"
+        "image": "/img/thumbnails/plants-garden/GlassVaseFlowers.png",
+        "modelFile": "/models/plants-garden/GlassVaseFlowers.glb",
+        "category": "plants-garden",
+        "dateAdded": "2024-10-17T12:25:00Z"
     },
     {
         "id": 33,
-        "name": "Armor Piece",
-        "description": "Detailed costume armor segment",
+        "name": "Potted Plant",
+        "description": "Leafy houseplant in a simple pot",
         "likes": 0,
-        "image": "/img/models/33.jpg",
-        "category": "props-cosplay",
-        "dateAdded": "2023-06-08T16:50:00Z"
+        "image": "/img/thumbnails/plants-garden/potted_plant_01.png",
+        "modelFile": "/models/plants-garden/potted_plant_01.glb",
+        "category": "plants-garden",
+        "dateAdded": "2025-05-02T07:37:00Z"
     },
     {
         "id": 34,
-        "name": "Atom Model",
-        "description": "Interactive atomic structure model",
+        "name": "Boombox",
+        "description": "Retro portable boombox with speakers and a cassette deck",
         "likes": 0,
-        "image": "/img/models/34.jpg",
-        "category": "education",
-        "dateAdded": "2023-08-21T09:15:00Z"
+        "image": "/img/thumbnails/tech-gadgets/BoomBox.png",
+        "modelFile": "/models/tech-gadgets/BoomBox.glb",
+        "category": "tech-gadgets",
+        "dateAdded": "2025-11-15T02:49:00Z"
     },
     {
         "id": 35,
-        "name": "Wall Sculpture",
-        "description": "Abstract wall mounted artwork",
+        "name": "Vintage Camera",
+        "description": "Classic film camera with a detailed lens and body",
         "likes": 0,
-        "image": "/img/models/35.jpg",
-        "category": "art",
-        "dateAdded": "2023-11-04T15:40:00Z"
+        "image": "/img/thumbnails/tech-gadgets/Camera_01.png",
+        "modelFile": "/models/tech-gadgets/Camera_01.glb",
+        "category": "tech-gadgets",
+        "dateAdded": "2026-05-30T22:01:00Z"
     },
     {
         "id": 36,
-        "name": "Measuring Tool",
-        "description": "Precise measurement device",
+        "name": "Classic Laptop",
+        "description": "Vintage laptop with a chunky keyboard and a thick screen",
         "likes": 0,
-        "image": "/img/models/36.jpg",
-        "category": "tools",
-        "dateAdded": "2024-01-17T10:05:00Z"
+        "image": "/img/thumbnails/tech-gadgets/classic_laptop.png",
+        "modelFile": "/models/tech-gadgets/classic_laptop.glb",
+        "category": "tech-gadgets",
+        "dateAdded": "2024-03-06T14:29:00Z"
     },
     {
         "id": 37,
-        "name": "Fantasy Tree",
-        "description": "Detailed tree for miniature landscapes",
+        "name": "Bookshelf Speaker",
+        "description": "Wood-finish bookshelf speaker with a horn tweeter and copper woofer",
         "likes": 0,
-        "image": "/img/models/37.jpg",
-        "category": "miniatures",
-        "dateAdded": "2024-03-30T13:30:00Z"
+        "image": "/img/thumbnails/tech-gadgets/photons_optimized_bookshelf_speaker_2.png",
+        "modelFile": "/models/tech-gadgets/photons_optimized_bookshelf_speaker_2.glb",
+        "category": "tech-gadgets",
+        "dateAdded": "2024-12-08T20:33:00Z"
     },
     {
         "id": 38,
-        "name": "Ring Collection",
-        "description": "Customizable ring designs",
+        "name": "Adjustable Wrench",
+        "description": "Steel adjustable wrench with a worm-gear jaw",
         "likes": 0,
-        "image": "/img/models/38.jpg",
-        "category": "fashion",
-        "dateAdded": "2024-06-12T08:55:00Z"
+        "image": "/img/thumbnails/tools-workshop/adjustable_wrench.png",
+        "modelFile": "/models/tools-workshop/adjustable_wrench.glb",
+        "category": "tools-workshop",
+        "dateAdded": "2024-09-19T09:41:00Z"
     },
     {
         "id": 39,
-        "name": "Print Fan",
-        "description": "Optimized cooling fan design",
+        "name": "Bench Vice",
+        "description": "Cast-iron bench vice for clamping work to the workbench",
         "likes": 0,
-        "image": "/img/models/39.jpg",
-        "category": "3d-printer",
-        "dateAdded": "2024-08-25T12:20:00Z"
+        "image": "/img/thumbnails/tools-workshop/bench_vice_01.png",
+        "modelFile": "/models/tools-workshop/bench_vice_01.glb",
+        "category": "tools-workshop",
+        "dateAdded": "2025-04-04T04:53:00Z"
     },
     {
         "id": 40,
-        "name": "Tool Rack",
-        "description": "Wall-mounted tool organization system",
+        "name": "Cross Pein Hammer",
+        "description": "Cross pein hammer with a wooden handle, for metal and woodwork",
         "likes": 0,
-        "image": "/img/models/40.jpg",
-        "category": "hobby-diy",
-        "dateAdded": "2024-11-08T17:45:00Z"
+        "image": "/img/thumbnails/tools-workshop/cross_pein_hammer.png",
+        "modelFile": "/models/tools-workshop/cross_pein_hammer.glb",
+        "category": "tools-workshop",
+        "dateAdded": "2025-10-18T00:05:00Z"
     },
     {
         "id": 41,
-        "name": "Action Figure",
-        "description": "Poseable character figure",
+        "name": "Mutant Tank",
+        "description": "Yellow armoured tank with a heavy turret and battle-worn tracks",
         "likes": 0,
-        "image": "/img/models/41.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-02-01T14:35:00Z"
+        "image": "/img/thumbnails/weapon-military/mutant.png",
+        "modelFile": "/models/weapon-military/mutant.glb",
+        "category": "weapon-military",
+        "dateAdded": "2024-02-07T11:44:00Z"
     },
     {
         "id": 42,
-        "name": "Cable Manager",
-        "description": "Desk cable organization solution",
+        "name": "Renault UE 57",
+        "description": "French WWII tracked tankette, a light armoured carrier",
         "likes": 0,
-        "image": "/img/models/42.jpg",
-        "category": "household",
-        "dateAdded": "2023-04-14T11:00:00Z"
+        "image": "/img/thumbnails/weapon-military/renault_ue_57.png",
+        "modelFile": "/models/weapon-military/renault_ue_57.glb",
+        "category": "weapon-military",
+        "dateAdded": "2024-08-22T06:56:00Z"
     },
     {
         "id": 43,
-        "name": "Prop Shield",
-        "description": "Fantasy shield for costumes",
+        "name": "AWP Sniper Rifle",
+        "description": "Display replica of the AWP sniper rifle from Counter-Strike 2",
         "likes": 0,
-        "image": "/img/models/43.jpg",
-        "category": "props-cosplay",
-        "dateAdded": "2023-07-27T16:25:00Z"
+        "image": "/img/thumbnails/weapon-military/rifle__awp_weapon_model_cs2.png",
+        "modelFile": "/models/weapon-military/rifle__awp_weapon_model_cs2.glb",
+        "category": "weapon-military",
+        "dateAdded": "2025-03-07T02:08:00Z"
     },
     {
         "id": 44,
-        "name": "Cell Model",
-        "description": "Detailed biological cell model",
+        "name": "Guardian Rifle",
+        "description": "Display replica of the Guardian semi-automatic rifle from Valorant",
         "likes": 0,
-        "image": "/img/models/44.jpg",
-        "category": "education",
-        "dateAdded": "2023-10-10T09:50:00Z"
+        "image": "/img/thumbnails/weapon-military/valorant_weapon_guardian_semi-automatic_rifle.png",
+        "modelFile": "/models/weapon-military/valorant_weapon_guardian_semi-automatic_rifle.glb",
+        "category": "weapon-military",
+        "dateAdded": "2025-09-19T21:20:00Z"
     },
     {
         "id": 45,
-        "name": "Art Lamp",
-        "description": "Decorative lamp with unique design",
+        "name": "Warden Rifle",
+        "description": "Display replica of the Warden rifle from Valorant",
         "likes": 0,
-        "image": "/img/models/45.jpg",
-        "category": "art",
-        "dateAdded": "2023-12-23T15:15:00Z"
+        "image": "/img/thumbnails/weapon-military/valorant_weapon_warden_rifle.png",
+        "modelFile": "/models/weapon-military/valorant_weapon_warden_rifle.glb",
+        "category": "weapon-military",
+        "dateAdded": "2026-04-04T16:32:00Z"
     },
     {
         "id": 46,
-        "name": "Precision Tool",
-        "description": "Fine detail work tool",
+        "name": "AH-64D Apache Longbow",
+        "description": "Scale model of the AH-64D Apache Longbow attack helicopter",
         "likes": 0,
-        "image": "/img/models/46.jpg",
-        "category": "tools",
-        "dateAdded": "2024-03-07T10:40:00Z"
+        "image": "/img/thumbnails/weapon-military/ah-64d_apache_longbow.png",
+        "modelFile": "/models/weapon-military/ah-64d_apache_longbow.glb",
+        "category": "weapon-military",
+        "dateAdded": "2025-04-19T13:27:00Z"
     },
     {
         "id": 47,
-        "name": "Terrain Piece",
-        "description": "Detailed landscape for gaming",
+        "name": "Su-30MKK Fighter Jet",
+        "description": "Scale model of the Su-30MKK multirole fighter with Kh-59M missiles",
         "likes": 0,
-        "image": "/img/models/47.jpg",
-        "category": "miniatures",
-        "dateAdded": "2024-05-20T14:05:00Z"
-    },
-    {
-        "id": 48,
-        "name": "Fashion Accessory",
-        "description": "Modern accessory design",
-        "likes": 0,
-        "image": "/img/models/48.jpg",
-        "category": "fashion",
-        "dateAdded": "2024-07-03T08:30:00Z"
-    },
-    {
-        "id": 49,
-        "name": "Printer Stand",
-        "description": "Stabilizing platform for 3D printers",
-        "likes": 0,
-        "image": "/img/models/49.jpg",
-        "category": "3d-printer",
-        "dateAdded": "2024-09-16T12:55:00Z"
-    },
-    {
-        "id": 50,
-        "name": "Planter Box",
-        "description": "Modular garden planter system",
-        "likes": 0,
-        "image": "/img/models/50.jpg",
-        "category": "hobby-diy",
-        "dateAdded": "2024-11-29T17:20:00Z"
-    },
-    {
-        "id": 51,
-        "name": "Building Blocks",
-        "description": "Compatible construction toy set",
-        "likes": 0,
-        "image": "/img/models/51.jpg",
-        "category": "toys-games",
-        "dateAdded": "2023-01-15T14:45:00Z"
-    },
-    {
-        "id": 52,
-        "name": "Shelf System",
-        "description": "Customizable shelving solution",
-        "likes": 0,
-        "image": "/img/models/52.jpg",
-        "category": "household",
-        "dateAdded": "2023-03-28T11:10:00Z"
+        "image": "/img/thumbnails/weapon-military/su-30mkk_with_kh-59m.png",
+        "modelFile": "/models/weapon-military/su-30mkk_with_kh-59m.glb",
+        "category": "weapon-military",
+        "dateAdded": "2026-01-27T05:58:00Z"
     }
 ]

@@ -1,12 +1,13 @@
 [
-    { "displayName": "3D Printer", "slug": "3d-printer" },
-    { "displayName": "Art", "slug": "art" },
-    { "displayName": "Education", "slug": "education" },
-    { "displayName": "Fashion", "slug": "fashion" },
-    { "displayName": "Hobby & DIY", "slug": "hobby-diy" },
-    { "displayName": "Household", "slug": "household" },
-    { "displayName": "Miniatures", "slug": "miniatures" },
-    { "displayName": "Props & Cosplay", "slug": "props-cosplay" },
-    { "displayName": "Tools", "slug": "tools" },
-    { "displayName": "Toys & Games", "slug": "toys-games" }
+    { "displayName": "Animals & Pets", "slug": "animals-pets" },
+    { "displayName": "Architecture", "slug": "architecture" },
+    { "displayName": "Art & Abstract", "slug": "art-abstract" },
+    { "displayName": "Cars & Vehicles", "slug": "cars-vehicles" },
+    { "displayName": "Fashion & Style", "slug": "fashion-style" },
+    { "displayName": "Food & Drink", "slug": "food-drink" },
+    { "displayName": "Furniture & Home", "slug": "furniture-home" },
+    { "displayName": "Plants & Garden", "slug": "plants-garden" },
+    { "displayName": "Tech & Gadgets", "slug": "tech-gadgets" },
+    { "displayName": "Tools & Workshop", "slug": "tools-workshop" },
+    { "displayName": "Weapons & Military", "slug": "weapon-military" }
 ]

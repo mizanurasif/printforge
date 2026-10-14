@@ -13,6 +13,7 @@ type SeedModel = {
     description: string
     likes: number
     image: string
+    modelFile?: string
     category: string
     dateAdded: string
 }
@@ -33,8 +34,12 @@ const seedUsers = [
     { name: 'Sara Okafor', email: 'sara@printforge.dev' },
 ]
 
-// Runs a seed image through saveImage, same as an upload: a 500x500 webp in /img/uploads
+const PLACEHOLDER_IMAGE = '/img/placeholder.png'
+
+// Runs a seed image through saveImage, same as an upload: a 500x500 webp in /img/uploads.
+// The shared placeholder is stored as is, like an upload without an image.
 async function processImage(imagePath: string): Promise<string> {
+    if (imagePath === PLACEHOLDER_IMAGE) return imagePath
     const buffer = fs.readFileSync(path.join(root, 'public', imagePath))
     return saveImage(new File([buffer], path.basename(imagePath)))
 }
@@ -63,9 +68,9 @@ async function main() {
             await tx`INSERT INTO categories ${tx(categories, 'slug', 'displayName')}`
 
             // Give every model a creator, round-robin over the demo users
-            const rows = models.map((m, i) => ({ ...m, image: images[i], userId: users[i % users.length].id }))
+            const rows = models.map((m, i) => ({ ...m, image: images[i], modelFile: m.modelFile ?? null, userId: users[i % users.length].id }))
             await tx`
-                INSERT INTO models ${tx(rows, 'id', 'name', 'description', 'likes', 'image', 'category', 'dateAdded', 'userId')}
+                INSERT INTO models ${tx(rows, 'id', 'name', 'description', 'likes', 'image', 'modelFile', 'category', 'dateAdded', 'userId')}
             `
 
             // We inserted explicit ids, so move the id counter past them

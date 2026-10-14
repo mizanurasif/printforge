@@ -25,6 +25,7 @@ CREATE TABLE models (
     description  TEXT        NOT NULL,
     likes        INTEGER     NOT NULL DEFAULT 0,
     image        TEXT        NOT NULL,
+    model_file   TEXT,                   -- URL of a .glb in /public, or NULL for image-only models
     category     TEXT        NOT NULL REFERENCES categories(slug),
     date_added   TIMESTAMPTZ NOT NULL DEFAULT now(),
     user_id      INTEGER     REFERENCES users(id) ON DELETE SET NULL
