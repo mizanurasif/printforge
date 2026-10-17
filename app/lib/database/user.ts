@@ -31,15 +31,15 @@ export async function getPublicUserById(id: number): Promise<PublicUser | undefi
 }
 
 // Deletes the user and all their models in one transaction.
-// Returns the deleted models' image paths (so the files can be removed), or null if the user didn't exist
-export async function deleteUser(id: number): Promise<string[] | null> {
+// Returns the deleted models' image and 3D file paths (so the files can be removed), or null if the user didn't exist
+export async function deleteUser(id: number): Promise<{ image: string, modelFile: string | null }[] | null> {
     return sql.begin(async (tx) => {
         // models.user_id is ON DELETE SET NULL, so delete the models explicitly rather than orphaning them
-        const models = await tx<{ image: string }[]>`
-            DELETE FROM models WHERE user_id = ${id} RETURNING image
+        const models = await tx<{ image: string, modelFile: string | null }[]>`
+            DELETE FROM models WHERE user_id = ${id} RETURNING image, model_file
         `
         const [user] = await tx`DELETE FROM users WHERE id = ${id} RETURNING id`
-        return user ? models.map((m) => m.image) : null
+        return user ? models : null
     })
 }
 

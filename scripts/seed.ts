@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import fs from 'fs'
 import path from 'path'
 import { deleteImage, saveImage } from '../app/lib/imageUtils'
+import { deleteModelFile } from '../app/lib/modelFileUtils'
 
 const sql = postgres(process.env.DATABASE_URL!, { transform: postgres.camel })
 const root = process.cwd()
@@ -47,8 +48,8 @@ async function processImage(imagePath: string): Promise<string> {
 async function main() {
     const passwordHash = await bcrypt.hash('password123', 10)
 
-    // Images of the models about to be wiped; deleted only after the new seed commits
-    const oldImages = (await sql<{ image: string }[]>`SELECT image FROM models`).map((m) => m.image)
+    // Files of the models about to be wiped; deleted only after the new seed commits
+    const oldModels = await sql<{ image: string, modelFile: string | null }[]>`SELECT image, model_file FROM models`
 
     const images = await Promise.all(models.map((m) => processImage(m.image)))
 
@@ -81,7 +82,8 @@ async function main() {
         throw err
     }
 
-    await Promise.all(oldImages.map(deleteImage))   // deleteImage only touches /img/uploads
+    // deleteImage only touches /img/uploads, and deleteModelFile only users' upload-*.glb files
+    await Promise.all(oldModels.flatMap((m) => [deleteImage(m.image), deleteModelFile(m.modelFile)]))
 
     console.log(`Seeded ${seedUsers.length} users, ${categories.length} categories and ${models.length} models`)
 }

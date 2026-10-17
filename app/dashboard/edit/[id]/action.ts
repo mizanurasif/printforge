@@ -5,8 +5,9 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { getModelById, updateModel } from '@/app/lib/database/database'
+import { getModelById, setModelFile, updateModel } from '@/app/lib/database/database'
 import { deleteImage, saveImage } from '@/app/lib/imageUtils'
+import { moveModelFile } from '@/app/lib/modelFileUtils'
 import { authOptions } from '@/app/lib/auth'
 import { getAllCategories } from '@/app/lib/database/categories'
 import type { UploadState } from '@/app/dashboard/upload/actions'
@@ -59,13 +60,17 @@ export async function editModel(_prevState: UploadState, formData: FormData): Pr
         return { fieldErrors }
     }
 
-    // Read the old image path from the database BEFORE updating (afterwards it's the new one),
+    // Read the old file paths from the database BEFORE updating (afterwards they're the new ones),
     // and never from the form, so a crafted request can't make us delete someone else's file
-    let oldImage: string
+    let current
     try {
-        oldImage = (await getModelById(modelId)).image
+        current = await getModelById(modelId)
     } catch {
         return { error: 'Model not found' }
+    }
+    // Every model needs a 3D file: one without (e.g. uploaded before files were required) must get one now
+    if (!current.modelFile && formData.get('hasModelFile') !== '1') {
+        return { fieldErrors: { modelFile: ['Choose a 3D model (.glb)'] } }
     }
 
     const newImage = image instanceof File && image.size > 0 ? await saveImage(image) : undefined
@@ -76,9 +81,22 @@ export async function editModel(_prevState: UploadState, formData: FormData): Pr
         if (newImage) await deleteImage(newImage)   // don't leave an orphaned file
         return { error: 'Could not update model. Please try again.' }
     }
-    if (newImage) await deleteImage(oldImage)
+    if (newImage) await deleteImage(current.image)
+
+    // The .glb lives in its category's folder, so follow a category change
+    if (current.modelFile && current.category !== parsed.data.category) {
+        try {
+            const moved = await moveModelFile(current.modelFile, parsed.data.category)
+            if (moved !== current.modelFile) await setModelFile({ modelId, userId, modelFile: moved })
+        } catch (err: unknown) {
+            // The file still works from its old folder, so don't fail the whole edit
+            console.error('Failed to move model file:', err)
+        }
+    }
 
     revalidatePath('/dashboard')
     revalidatePath(`/3d-models/${modelId}`)
+    // The browser uploads the new .glb next, then navigates itself
+    if (formData.get('hasModelFile') === '1') return { modelId }
     redirect(`/3d-models/${modelId}`)
 }

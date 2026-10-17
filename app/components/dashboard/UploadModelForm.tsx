@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, {  startTransition, useActionState, useEffect, useState } from 'react'
 import { FaCloudArrowUp, FaHeart, FaXmark } from 'react-icons/fa6'
-import { uploadModel, type UploadState } from '@/app/dashboard/upload/actions'
+import { deleteModelAction, uploadModel, type UploadState } from '@/app/dashboard/upload/actions'
 import { Category } from '@/app/lib/models'
+import ModelFileField, { ModelFileViewer, uploadModelFile } from './ModelFileField'
 
 const initialState: UploadState = {}
 const NAME_MAX = 80
@@ -19,7 +21,32 @@ function FieldError({ messages }: { messages?: string[] }) {
 }
 
 export default function UploadModelForm({ categories }: { categories: Category[] }) {
-    const [state, formAction, pending] = useActionState(uploadModel, initialState)
+    const router = useRouter()
+    const [progress, setProgress] = useState<number | null>(null)
+
+    // The .glb is too big for a Server Action (6MB limit), so it's taken out of the form,
+    // and sent to its own route once the model is saved and has an id
+    async function submit(prevState: UploadState, formData: FormData): Promise<UploadState> {
+        const glb = formData.get('modelFile')
+        formData.delete('modelFile')
+        if (glb instanceof File) formData.set('hasModelFile', '1')
+
+        const result = await uploadModel(prevState, formData)
+        if (!result.modelId || !(glb instanceof File)) return result
+
+        try {
+            await uploadModelFile(result.modelId, glb, setProgress)
+        } catch (err: unknown) {
+            setProgress(null)
+            // The 3D file is required, so don't keep a model without one: remove it and let them try again
+            await deleteModelAction(result.modelId)
+            const reason = err instanceof Error ? err.message : 'Upload failed'
+            return { error: `The 3D model couldn't be uploaded (${reason}). Nothing was saved, please try again.` }
+        }
+        router.push(`/3d-models/${result.modelId}`)
+        return result
+    }
+    const [state, formAction, pending] = useActionState(submit, initialState)
 
     // Controlled fields drive the live preview and survive a failed submit
     const [name, setName] = useState('')
@@ -28,6 +55,17 @@ export default function UploadModelForm({ categories }: { categories: Category[]
     const [image, setImage] = useState<{ file: File, previewUrl: string } | null>(null)
     const imageFile = image?.file ?? null
     const previewUrl = image?.previewUrl ?? null
+    const [modelFile, setModelFile] = useState<{ file: File, url: string } | null>(null)
+    // A picture of the 3D preview, used as the model's image when no image is chosen
+    const [snapshot, setSnapshot] = useState<Blob | null>(null)
+
+    function changeModelFile(file: File | null) {
+        setModelFile(file ? { file, url: URL.createObjectURL(file) } : null)
+        setSnapshot(null)
+    }
+    useEffect(() => () => {
+        if (modelFile) URL.revokeObjectURL(modelFile.url)
+    }, [modelFile])
 
     function changeImage(file: File | null) {
         setImage(file ? { file, previewUrl: URL.createObjectURL(file) } : null)
@@ -40,16 +78,22 @@ export default function UploadModelForm({ categories }: { categories: Category[]
   
     }
     // Free the previous preview's memory when the image changes or the page is left
-    useEffect(() => () => {
-        if (image) URL.revokeObjectURL(image.previewUrl)
-    }, [image])
+    useEffect(() => {
+    // effect body: does nothing
+
+        return () => {                      // cleanup function
+            if (modelFile) URL.revokeObjectURL(modelFile.url)
+        }
+    }, [modelFile])
 
     // Submit manually: a plain `action={formAction}` resets the form afterwards,
     // which would wipe the user's input (and chosen image) when validation fails
     function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
-        formData.set('image', imageFile ?? new File([], ''))
+        const snapshotImage = modelFile && snapshot ? new File([snapshot], 'snapshot.png', { type: 'image/png' }) : null
+        formData.set('image', imageFile ?? snapshotImage ?? new File([], ''))
+        if (modelFile) formData.set('modelFile', modelFile.file)
         startTransition(() => formAction(formData))
     }
 
@@ -78,7 +122,7 @@ export default function UploadModelForm({ categories }: { categories: Category[]
                         <label className="flex flex-col items-center justify-center gap-2 px-4 py-8 text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-orange-accent hover:bg-orange-50/40">
                             <FaCloudArrowUp className="text-3xl text-gray-400" aria-hidden="true" />
                             <span className="text-sm font-medium text-gray-700">Click to choose an image</span>
-                            <span className="text-xs text-gray-500">PNG, JPG or WebP, up to 5MB. Without one, a placeholder is used.</span>
+                            <span className="text-xs text-gray-500">PNG, JPG or WebP, up to 5MB. Without one, a snapshot of your 3D model is used.</span>
                             <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only"
                                 onChange={handleUploadedImage}    
                                  />
@@ -86,6 +130,8 @@ export default function UploadModelForm({ categories }: { categories: Category[]
                     )}
                     <FieldError messages={state.fieldErrors?.image} />
                 </div>
+
+                <ModelFileField file={modelFile?.file ?? null} onChange={changeModelFile} serverError={state.fieldErrors?.modelFile?.[0]} />
 
                 {/* Name */}
                 <label className="block">
@@ -131,7 +177,7 @@ export default function UploadModelForm({ categories }: { categories: Category[]
                     </Link>
                     <button type="submit" disabled={pending}
                         className="px-5 py-2 font-semibold text-white rounded-md cursor-pointer bg-orange-400 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-wait">
-                        {pending ? 'Uploading...' : 'Upload model'}
+                        {pending ? (progress !== null ? `Uploading 3D model... ${progress}%` : 'Uploading...') : 'Upload model'}
                     </button>
                 </div>
             </form>
@@ -140,8 +186,14 @@ export default function UploadModelForm({ categories }: { categories: Category[]
             <aside className="lg:sticky lg:top-6 h-fit">
                 <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
                 <div className="overflow-hidden bg-white rounded-lg shadow-md">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL */}
-                    <img src={previewUrl ?? PLACEHOLDER_IMAGE} alt="" className="object-cover w-full aspect-square bg-gray-100" />
+                    {modelFile ? (
+                        <div className="w-full aspect-square bg-gray-100">
+                            <ModelFileViewer src={modelFile.url} name={name || 'your model'} onSnapshot={setSnapshot} />
+                        </div>
+                    ) : (
+                        // eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL
+                        <img src={previewUrl ?? PLACEHOLDER_IMAGE} alt="" className="object-cover w-full aspect-square bg-gray-100" />
+                    )}
                     <div className="p-4">
                         <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{name || 'Model name'}</h3>
                         <p className="mt-2 text-sm text-gray-800 line-clamp-2">{description || 'Your description will appear here.'}</p>

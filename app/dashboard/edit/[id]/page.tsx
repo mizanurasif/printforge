@@ -30,7 +30,7 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
                 <FaArrowLeft aria-hidden="true" /> Back to dashboard
             </Link>
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Edit {model.name}</h1>
-            <p className="mb-8 text-gray-500">Update your model&apos;s details or replace its image.</p>
+            <p className="mb-8 text-gray-500">Update your model&apos;s details, or replace its image or 3D model.</p>
 
             <EditModelForm categories={categories} model={model} />
         </main>

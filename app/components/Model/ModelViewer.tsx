@@ -20,27 +20,46 @@ function pickClip(clips: THREE.AnimationClip[]): THREE.AnimationClip | undefined
     return moving[0]
 }
 
+// Copies the WebGL canvas into a square PNG on the catalog's grey background (the canvas itself is transparent).
+// Must run right after a render: once the browser has shown the frame, the WebGL buffer is cleared.
+function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => void) {
+    const size = Math.min(canvas.width, canvas.height)
+    const square = document.createElement('canvas')
+    square.width = square.height = size
+    const ctx = square.getContext('2d')
+    if (!ctx) return
+    ctx.fillStyle = '#f3f4f6'
+    ctx.fillRect(0, 0, size, size)
+    ctx.drawImage(canvas, (canvas.width - size) / 2, (canvas.height - size) / 2, size, size, 0, 0, size, size)
+    square.toBlob((blob) => { if (blob) onSnapshot(blob) }, 'image/png')
+}
+
 // Only load this through ModelPreview (next/dynamic, ssr: false): WebGL doesn't exist on the server.
 // See docs/3D_VIEWER_GUIDE.md for what each numbered part does.
 // poster: the model's picture, shown until the 3D file has loaded
 // animate: play one of the file's animations, if it has any (see pickClip)
 // zoom: false stops the wheel and touch from zooming, so the page still scrolls over the model
-export default function ModelViewer({ src, name, poster, animate = true, zoom = true }: {
+// onSnapshot: called once with a PNG of the first frame, e.g. to use as an uploaded model's picture
+export default function ModelViewer({ src, name, poster, animate = true, zoom = true, onSnapshot }: {
     src: string
     name: string
     poster?: string
     animate?: boolean
     zoom?: boolean
+    onSnapshot?: (image: Blob) => void
 }) {
     const mountRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
+    // A ref, so a new callback from the parent doesn't restart the effect (and reload the model)
+    const onSnapshotRef = useRef(onSnapshot)
+    useEffect(() => { onSnapshotRef.current = onSnapshot })
 
     useEffect(() => {
         const mount = mountRef.current
         if (!mount) return
         let disposed = false
 
-        // 1. Renderer: draws into a <canvas> added inside our div
+        // 1. Renderer:  creates a WebGL renderer, which adds a <canvas> inside the div. The GPU draws the 3D model onto that canvas.
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
         // false: size the drawing buffer only, and let CSS size the canvas, so it never props its box open
@@ -49,24 +68,26 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
         mount.appendChild(renderer.domElement)
 
         // 2. Scene, camera, and studio lighting
-        const scene = new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera(45, mount.clientWidth / mount.clientHeight, 0.01, 1000)
+        const scene = new THREE.Scene() //The scene holds everything.
+        const camera = new THREE.PerspectiveCamera(45, mount.clientWidth / mount.clientHeight, 0.01, 1000) //The camera is your point of view, with a 45° field of view.
         const pmrem = new THREE.PMREMGenerator(renderer)
-        scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+        scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture //RoomEnvironment provides soft studio lighting, so metal and glass reflect realistically
 
         // 3. Mouse and touch controls
-        const controls = new OrbitControls(camera, renderer.domElement)
+        const controls = new OrbitControls(camera, renderer.domElement) //OrbitControls lets you drag to rotate and scroll to zoom. autoRotate spins the model slowly on its own.
         controls.enableDamping = true
         controls.autoRotate = true
         controls.enableZoom = zoom
         // OrbitControls blocks all touch scrolling on the canvas; without zoom, let vertical swipes scroll the page
         if (!zoom) renderer.domElement.style.touchAction = 'pan-y'
         let mixer: THREE.AnimationMixer | null = null
+        let snapshotPending = false
 
         // 4. Load the file, then centre it and move the camera back until it fits
         new GLTFLoader().load(src, (gltf) => {
             if (disposed) return
             const model = gltf.scene
+            // If it has an animation, pickClip chooses one and an AnimationMixer plays it
             const clip = animate ? pickClip(gltf.animations) : undefined
             if (clip) {
                 mixer = new THREE.AnimationMixer(model)
@@ -74,16 +95,18 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
                 mixer.update(0)   // pose the model at the first frame, so the framing below fits the animation
                 controls.autoRotate = false   // spinning hides subtle motion like an idle; dragging still turns it
             }
+            //The code measures the model with a bounding box and moves it to the centre
             const box = new THREE.Box3().setFromObject(model)
             model.position.sub(box.getCenter(new THREE.Vector3()))
             scene.add(model)
-
+            //It moves the camera back just far enough for the whole model to fit
             const radius = box.getSize(new THREE.Vector3()).length() / 2
             const distance = radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))
             camera.position.set(0, radius * 0.4, distance)
             camera.near = distance / 100
             camera.far = distance * 100
             camera.updateProjectionMatrix()
+            snapshotPending = true
             setStatus('ready')
         }, undefined, () => { if (!disposed) setStatus('error') })
 
@@ -94,9 +117,14 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
             lastTime = time
             controls.update()
             renderer.render(scene, camera)
+            if (snapshotPending) {
+                snapshotPending = false
+                if (onSnapshotRef.current) takeSnapshot(renderer.domElement, onSnapshotRef.current)
+            }
         })
 
         // 6. Keep the canvas the size of the div
+        
         const observer = new ResizeObserver(() => {
             renderer.setSize(mount.clientWidth, mount.clientHeight, false)
             camera.aspect = mount.clientWidth / mount.clientHeight
@@ -105,6 +133,8 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
         observer.observe(mount)
 
         // 7. Clean up: free GPU memory and the WebGL context
+        //runs when you leave the page. It frees the GPU memory used by geometry, materials and textures, and 
+        // closes the WebGL context. Without this, every model page you visit would leak GPU memory
         return () => {
             disposed = true
             observer.disconnect()
@@ -133,6 +163,7 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
         <div ref={mountRef} className={`relative w-full h-full ${zoom ? 'touch-none' : 'touch-pan-y'}`} role="img" aria-label={`3D view of ${name}`}>
             {status === 'loading' && (
                 <>
+                    {/* The <Image> isn't showing the 3D model. It shows the poster, the model's thumbnail PNG, while the 3D file downloads */}
                     {poster && <Image width={500} height={500} src={poster} alt="" loading="eager"
                         className="absolute inset-0 object-cover w-full h-full" />}
                     <p className="absolute inset-x-0 bottom-3 text-sm text-center text-gray-500">Loading 3D model...</p>

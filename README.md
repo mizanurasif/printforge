@@ -17,7 +17,6 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 - The model's thumbnail is shown while the 3D file loads, with an error state if it fails
 - Full cleanup on unmount (geometries, materials, textures, WebGL context) so navigating between models doesn't leak GPU memory
 - Touch-friendly: when zoom is off, vertical swipes still scroll the page
-- Models without a 3D file (such as user uploads) fall back to their image
 
 ### Catalog
 - 47 models across 11 categories, each showing its creator
@@ -40,7 +39,14 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 - Upload page with an image picker, preview, and a live preview card that updates as you type
 - Images up to 5MB (PNG, JPG or WebP), processed with **sharp**: auto-rotated from EXIF data, cropped to 500×500 and converted to WebP under a random file name. Without an image, a placeholder is used
 - Server-side validation with **zod**: field lengths, the category must exist in the database, image type and size
-- **Edit** and **delete** your own models from the dashboard; deleting a model also removes its uploaded image
+- **3D model upload**, required for every model (`.glb`, up to 50MB):
+  - **Live 3D preview** in the form before anything is uploaded (the file is shown from a local `blob:` URL)
+  - Without an image, a **snapshot of the 3D preview** becomes the catalog picture
+  - Sent to its own Route Handler (`PUT /api/models/[id]/file`) with a progress bar, because Server Actions are capped at 6MB. The body **streams to disk** instead of being held in memory
+  - The server checks the binary glTF header and the real byte count, not the file name or `Content-Length`, and deletes partial files on failure
+  - If the file upload fails, the just-created model is deleted again, so no model exists without its 3D file
+  - Saved as `public/models/<category>/upload-<uuid>.glb`, moved if the category changes, and replaceable from the edit page
+- **Edit** and **delete** your own models from the dashboard; deleting a model also removes its uploaded image and 3D file
 - **Ownership checks on the server**: updates and deletes only touch rows where `user_id` matches the logged-in user, so nobody can change someone else's model by guessing an id
 - Login is checked inside every Server Action, not only on the page
 
@@ -135,6 +141,7 @@ app/
 ├── login/ register/      # Auth pages
 ├── about/
 ├── api/auth/[...nextauth]/route.ts
+├── api/models/[id]/file/route.ts   # Streams an uploaded .glb to disk
 ├── components/
 │   ├── Model/            # Cards, grid, like button, ModelPreview + ModelViewer (three.js)
 │   ├── HeroModel.tsx     # Animated home page model
@@ -143,6 +150,7 @@ app/
 └── lib/
     ├── auth.ts           # NextAuth options
     ├── imageUtils.ts     # Save / delete uploaded images (sharp)
+    ├── modelFileUtils.ts # Save (with glTF checks) / move / delete uploaded .glb files
     ├── models.ts         # Shared types
     └── database/         # db.ts (connection), model, category, user and like queries
 public/
@@ -165,5 +173,4 @@ The catalog's 3D models come from [Poly Haven](https://polyhaven.com), the [Khro
 ## Roadmap
 
 - [ ] **Deploy** to Vercel with a hosted PostgreSQL database
-- [ ] Move the `.glb` files to object storage / a CDN (they're ~550MB in total)
-- [ ] Let users upload their own `.glb` files
+- [ ] Move uploads (images and `.glb` files) to object storage / a CDN. Files written to `public/` at runtime only work with `npm run dev` and a writable disk, not on Vercel

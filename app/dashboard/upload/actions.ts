@@ -8,6 +8,7 @@ import { getAllCategories } from '../../lib/database/categories'
 import { createModel, deleteModel } from '@/app/lib/database/database'
 import { revalidatePath } from 'next/cache'
 import { deleteImage, saveImage } from '@/app/lib/imageUtils'
+import { deleteModelFile } from '@/app/lib/modelFileUtils'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -22,7 +23,10 @@ const uploadSchema = z.object({
 
 export type UploadState = {
     error?: string
-    fieldErrors?: Partial<Record<'name' | 'description' | 'category' | 'image', string[]>>
+    // The saved model's id, returned instead of redirecting: the browser still has to send its .glb
+    // to /api/models/[id]/file (upload, and edit when the file is replaced)
+    modelId?: number
+    fieldErrors?: Partial<Record<'name' | 'description' | 'category' | 'image' | 'modelFile', string[]>>
 }
 
 
@@ -30,10 +34,11 @@ export async function deleteModelAction(modelId: number) {
     const session = await getServerSession(authOptions)
     if (!session) redirect('/login')
 
-    const imagePath = await deleteModel({ modelId, userId: Number(session.user.id) })
-    if (imagePath === null) return { error: 'Model not found' }
+    const deleted = await deleteModel({ modelId, userId: Number(session.user.id) })
+    if (deleted === null) return { error: 'Model not found' }
 
-    await deleteImage(imagePath)
+    await deleteImage(deleted.image)
+    await deleteModelFile(deleted.modelFile)
     revalidatePath('/dashboard')
     return {}
 }
@@ -68,6 +73,10 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
         }
     }
 
+    // Every model needs a 3D file. The file itself goes to /api/models/[id]/file next (too big for a Server Action),
+    // and the browser deletes the model again if that upload fails
+    if (formData.get('hasModelFile') !== '1') fieldErrors.modelFile = ['Choose a 3D model (.glb)']
+
     if (!parsed.success || Object.keys(fieldErrors).length > 0) {
         return { fieldErrors }
     }
@@ -84,5 +93,6 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
     }
 
     revalidatePath('/dashboard')
-    redirect(`/3d-models/${modelId}`)
+    // The browser uploads the .glb next, then navigates itself
+    return { modelId }
 }

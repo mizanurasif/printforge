@@ -104,14 +104,31 @@ export async function createModel(model: {
     return inserted.id
 }
 
-// Returns the deleted model's image path, or null if it wasn't found or isn't this user's
-export async function deleteModel({ modelId, userId }: { modelId: number, userId: number }): Promise<string | null> {
-    const [deleted] = await sql<{ image: string }[]>`
+// Returns the deleted model's files, or null if it wasn't found or isn't this user's
+export async function deleteModel({ modelId, userId }: { modelId: number, userId: number }): Promise<{ image: string, modelFile: string | null } | null> {
+    const [deleted] = await sql<{ image: string, modelFile: string | null }[]>`
         DELETE FROM models
         WHERE id = ${modelId} AND user_id = ${userId}
-        RETURNING image
+        RETURNING image, model_file
     `
-    return deleted?.image ?? null
+    return deleted ?? null
+}
+
+// Sets (or clears, with null) a model's 3D file. Returns the previous file,
+// or undefined if the model wasn't found or isn't this user's
+export async function setModelFile({ modelId, userId, modelFile }: {
+    modelId: number
+    userId: number
+    modelFile: string | null
+}): Promise<string | null | undefined> {
+    // Joining the row to itself lets RETURNING read the value from before the update
+    const [updated] = await sql<{ oldFile: string | null }[]>`
+        UPDATE models m SET model_file = ${modelFile}
+        FROM models old
+        WHERE m.id = old.id AND m.id = ${modelId} AND m.user_id = ${userId}
+        RETURNING old.model_file AS old_file
+    `
+    return updated ? updated.oldFile : undefined
 }
 
 export async function updateModel({ modelId, userId, ...fields }: {
