@@ -1,10 +1,6 @@
--- PrintForge schema. Safe to re-run: it drops and recreates every table.
--- WARNING: this deletes all data, including registered users.
-
-DROP TABLE IF EXISTS likes;
-DROP TABLE IF EXISTS models;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS users;
+-- Up Migration
+-- The schema as it was when migrations were introduced (same as the old scripts/schema.sql).
+-- Every later change goes in a new migration: npm run db:migrate:create <name>
 
 CREATE TABLE users (
     id             SERIAL PRIMARY KEY,
@@ -46,3 +42,10 @@ CREATE INDEX models_user_id_idx ON models(user_id);
 CREATE INDEX models_category_idx ON models(category);
 -- Speeds up "who liked this model" and the cascade when a model is deleted
 CREATE INDEX likes_model_id_idx ON likes(model_id);
+
+-- Down Migration
+
+DROP TABLE likes;
+DROP TABLE models;
+DROP TABLE categories;
+DROP TABLE users;

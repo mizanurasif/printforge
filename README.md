@@ -14,7 +14,9 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 - Built directly on **three.js** (WebGL renderer, `GLTFLoader`, `OrbitControls`, studio lighting from `RoomEnvironment`)
 - Auto-framing: each model is centered and the camera is pulled back until it fits, whatever its size or units
 - **Code-split and client-only**: three.js loads in its own chunk through `next/dynamic` (`ssr: false`), so pages that don't show a model never download it
-- The model's thumbnail is shown while the 3D file loads, with an error state if it fails
+- A loading spinner while the 3D file downloads, and an error state if it fails
+- Light sky-blue background behind every model and picture, so white models (like the AI-generated ones) stand out
+- **Download** button on the model page that saves the `.glb` under the model's name
 - Full cleanup on unmount (geometries, materials, textures, WebGL context) so navigating between models doesn't leak GPU memory
 - Touch-friendly: when zoom is off, vertical swipes still scroll the page
 
@@ -35,7 +37,7 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 - **Sort** by most popular, A–Z, or most recent
 - **Filter** by category
 - **Server-side pagination**: only the current page is fetched from the database
-- Model detail pages with creator, category, likes and upload date
+- Model detail pages with creator, category, likes, upload date and a `.glb` download
 - Loading states and custom 404 pages
 
 ### Authentication
@@ -64,11 +66,11 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 ### Likes
 - Like and unlike models; the heart and count update instantly (optimistic update with `useTransition`), roll back if the request fails, then sync to the real count from the database
 - One like per user per model, enforced by the database (composite primary key on `likes`)
-- Like counts are computed from the `likes` table, not stored as a number that can drift
+- The count on each model is updated in the same transaction as the `likes` row, with the model row locked, so two likes at the same moment can't miscount
 
 ### Creator profiles (`/user/[id]`)
 - Public page with the creator's name, join date, number of models and likes received
-- Grid of everything they've uploaded
+- Their models, most liked first, with **server-side pagination** (only the current page is fetched; the stats are counted over all their models)
 - Creator names on model cards and detail pages link to their profile
 
 ### Dashboard (`/dashboard`)
@@ -81,6 +83,7 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 ### Database
 - **PostgreSQL** with a relational schema: `users`, `categories`, `models` (`models.user_id → users.id`) and `likes` (many-to-many between users and models)
 - Parameterized queries with [postgres.js](https://github.com/porsager/postgres); sort options come from a whitelist, so user input never becomes SQL
+- Versioned **migrations** (node-pg-migrate, plain SQL with up and down steps), hosted on **Neon** serverless Postgres
 - Seed script that runs in a single transaction, creates demo creators and assigns every model to one of them
 
 ---
@@ -94,7 +97,7 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 | UI | React 19 (`useActionState`, `useTransition`, React Compiler), Tailwind CSS 4, react-icons |
 | 3D | three.js (glTF / `.glb` models) |
 | AI | Hunyuan3D-2 image-to-3D via its Gradio HTTP API (Hugging Face ZeroGPU) |
-| Database | PostgreSQL 18, postgres.js |
+| Database | PostgreSQL 18 (Neon), postgres.js, node-pg-migrate |
 | Auth | NextAuth v4 (Credentials, JWT), bcryptjs |
 | Images | sharp |
 | Validation | zod |
@@ -104,8 +107,8 @@ Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAu
 ## Getting started
 
 ### Prerequisites
-- Node.js 20.6 or newer
-- PostgreSQL (with pgAdmin 4, or `psql`)
+- Node.js 20.11 or newer
+- A PostgreSQL database: local (with pgAdmin 4, or `psql`) or a free one on [Neon](https://neon.tech)
 
 ### 1. Install dependencies
 ```bash
@@ -113,7 +116,7 @@ npm install
 ```
 
 ### 2. Create the database
-In pgAdmin create a database called `printforge`, open **Tools → Query Tool** and run [`scripts/schema.sql`](scripts/schema.sql).
+Either a local one (in pgAdmin create a database called `printforge`) or a free hosted one on [Neon](https://neon.tech). You only need its connection string for the next step: the tables are created by the migrations in step 4.
 
 ### 3. Environment variables
 Create a `.env` file in the project root:
@@ -126,6 +129,14 @@ NEXTAUTH_URL=http://localhost:3000
 
 If your database password has special characters, URL-encode them (`@` → `%40`, `#` → `%23`).
 
+For **Neon**, use the connection string from its dashboard:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
+```
+
+Neon shows two strings: **direct** and **pooled** (its host contains `-pooler`). Use the direct one for migrations. For a deployed app, the pooled one handles many connections better.
+
 **Optional, for 2D to 3D:** add a free Hugging Face token (Settings → Access Tokens, type *Read*):
 
 ```env
@@ -134,13 +145,30 @@ HF_TOKEN=hf_xxxxxxxxxxxxxxxx
 
 Generation works without it, but the GPU quota is per caller, and all users of your server share one. Hugging Face's ZeroGPU daily quota is 2 minutes of GPU time without a token and 5 minutes with a free account (40 with PRO), which is very roughly 5–15 and 15–35 generations a day. It resets 24 hours after first use.
 
-### 4. Seed and run
+### 4. Create the tables, seed and run
 ```bash
-npm run db:seed   # 3 demo users, 11 categories, 47 models
+npm run db:migrate   # creates the tables (runs every migration not yet applied)
+npm run db:seed      # 3 demo users, 11 categories, 47 models
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Changing the schema
+The schema is built by **migrations** ([node-pg-migrate](https://github.com/salsita/node-pg-migrate)), plain SQL files in `migrations/`. Each one runs once per database, and the `pgmigrations` table records which have run, so the same files keep a local database and Neon in sync.
+
+```bash
+npm run db:migrate:create add-something   # new file in migrations/, write the SQL under "-- Up Migration" and "-- Down Migration"
+npm run db:migrate                        # apply it to the database in DATABASE_URL
+npm run db:migrate:down                   # undo the last one
+```
+
+**Moving an existing database** (for example local → Neon): run `npm run db:migrate` against the new database to create the tables, then copy the rows:
+
+```bash
+pg_dump --data-only --no-owner --no-acl -T 'pgmigrations*' "<old database url>" > data.sql
+psql "<new database url>" -f data.sql
+```
 
 ### Demo accounts
 | Email | Password |
@@ -183,8 +211,8 @@ public/
 ├── models/               # .glb files, one folder per category (credits in SOURCES.md)
 └── img/thumbnails/       # Catalog thumbnails
 scripts/
-├── schema.sql            # Table definitions
 └── seed.ts               # Demo data
+migrations/               # Schema changes, oldest first (node-pg-migrate)
 proxy.ts                  # Route protection
 ```
 
@@ -192,13 +220,14 @@ proxy.ts                  # Route protection
 
 ## 3D model credits
 
-The catalog's 3D models come from [Poly Haven](https://polyhaven.com), the [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets) and other free sources, under CC0 or CC-BY 4.0 licenses. Authors and licenses for every file are listed in [`public/models/SOURCES.md`](public/models/SOURCES.md), which is also linked from the site footer.
+The catalog's 3D models come from [Poly Haven](https://polyhaven.com), the [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets) and other free sources, under CC0 or CC-BY 4.0 licenses. Authors and licenses are listed in [`public/models/SOURCES.md`](public/models/SOURCES.md), which is also linked from the site footer.
 
 ---
 
 ## Roadmap
 
-- [ ] **Deploy** to Vercel with a hosted PostgreSQL database
+- [ ] **Deploy** to Vercel (the database is already on Neon)
+- [ ] Credit the remaining `.glb` files in `SOURCES.md` (some aren't listed yet), and compress the models (Meshopt / Draco) to shrink the 570MB of files
 - [ ] Move uploads (images and `.glb` files) to object storage / a CDN. Files written to `public/` at runtime only work with `npm run dev` and a writable disk, not on Vercel
 - [ ] 2D to 3D: a daily generation limit per user, and simplifying the generated meshes (they can have 600k+ faces) before saving
 - [ ] Use the same one-request save (`POST /api/models`) for the normal upload page
