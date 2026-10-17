@@ -9,7 +9,7 @@ const ModelViewer = dynamic(() => import('./Model/ModelViewer'), { ssr: false })
 export default function HeroModel() {
     return (
         <div className="w-full min-w-0 max-w-[600px] aspect-square md:flex-1">
-            <ModelViewer src="/models/phoenix-bird/phoenix-bird.glb" name="a phoenix in flight" animate zoom={false} />
+            <ModelViewer src="/phoenix-bird/phoenix-bird.glb" name="a phoenix in flight" animate zoom={false} />
         </div>
     )
 }
