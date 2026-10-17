@@ -7,4 +7,4 @@ export default withAuth({
 })
 
 // Only list private routes here; everything else stays public
-export const config = { matcher: ["/dashboard/:path*"] }
+export const config = { matcher: ["/dashboard/:path*", "/generate"] }

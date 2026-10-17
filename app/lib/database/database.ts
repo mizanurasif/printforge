@@ -87,6 +87,7 @@ export async function createModel(model: {
     description: string
     category: string
     image: string
+    modelFile?: string
     userId: number
 }): Promise<number> {
     const row = {
@@ -94,6 +95,7 @@ export async function createModel(model: {
         description: model.description,
         category: model.category,
         image: model.image,
+        model_file: model.modelFile ?? null,
         user_id: model.userId,
     }   // likes and date_added use their DEFAULTs
 

@@ -6,7 +6,7 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web'
 
-export const MAX_MODEL_BYTES = 50 * 1024 * 1024
+export const MAX_MODEL_BYTES = 80 * 1024 * 1024
 const MODELS_DIR = path.join(process.cwd(), 'public', 'models')
 // Uploads are named upload-<uuid>.glb, so the seeded models in the same folders are never moved or deleted
 const UPLOADED_FILE = /^\/models\/[a-z0-9-]+\/upload-[0-9a-f-]{36}\.glb$/

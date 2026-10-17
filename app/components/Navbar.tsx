@@ -33,6 +33,8 @@ export default function Navbar(){
           </Link>
           <ul className="flex items-center gap-2.5">
               <NavLink href="/3d-models" isActive={pathname.startsWith("/3d-models")}>3D Models</NavLink>
+              {/* Shown to everyone: logged-out users are sent to /login first (proxy.ts and the page check) */}
+              <NavLink href="/generate" isActive={pathname.startsWith("/generate")}>2D to 3D</NavLink>
               <NavLink href="/about" isActive={pathname === "/about"}>About</NavLink>
               {status === "authenticated" ? (
                 <>
