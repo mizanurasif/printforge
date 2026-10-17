@@ -6,6 +6,7 @@ export interface Model {
   description: string
   likes: number
   image: string
+  modelFile: string | null   // URL of a .glb in /public, or null for image-only models
   category: string
   dateAdded: Date
   userId: number | null

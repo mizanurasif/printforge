@@ -1,10 +1,10 @@
 import type { ModelDetailPageProps } from "@/app/lib/models"
 import { getModelById } from "@/app/lib/database/database"
-import Image from "next/image"
 import Link from "next/link"
-import { FaPen } from "react-icons/fa6"
+import { FaDownload, FaPen } from "react-icons/fa6"
 import DeleteModelButton from "@/app/components/dashboard/DeleteModelButton"
 import LikeButton from "@/app/components/Model/LikeButton"
+import ModelPreview from "@/app/components/Model/ModelPreview"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/lib/auth"
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
@@ -15,15 +15,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
     return (
     <div className="container max-w-6xl px-4 py-8 mx-auto">
       <article className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <figure className="relative overflow-hidden rounded-lg shadow-lg aspect-square">
-          <Image
-            width={500}
-            height={500}
-            src={model.image}
-            alt={model.name}
-            className="absolute inset-0 object-cover w-full h-full"
-          />
-        </figure>
+        <ModelPreview image={model.image} modelFile={model.modelFile} name={model.name} />
 
         <section className="flex flex-col justify-center h-full">
           <div className="flex items-center mb-2 text-2xl text-gray-600">
@@ -56,6 +48,14 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
               {model.description}
             </p>
           </div>
+
+          {/* The .glb is a static file in /public, so a plain link with "download" saves it under the model's name */}
+          {model.modelFile && (
+            <a href={model.modelFile} download={`${model.name.trim().replace(/[^\w-]+/g, '-')}.glb`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 mb-6 font-semibold text-white transition-colors rounded-md w-fit bg-orange-400 hover:bg-orange-500">
+              <FaDownload aria-hidden="true" /> Download .glb
+            </a>
+          )}
 
           <footer className="text-sm text-gray-500">
             {model.creatorName && (

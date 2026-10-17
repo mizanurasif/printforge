@@ -1,11 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { startTransition, useActionState, useEffect, useState } from 'react'
 import { FaCloudArrowUp, FaHeart, FaXmark } from 'react-icons/fa6'
 import type { UploadState } from '@/app/dashboard/upload/actions'
 import { editModel } from '@/app/dashboard/edit/[id]/action'
 import { Category, Model } from '@/app/lib/models'
+import ModelFileField, { ModelFileViewer, uploadModelFile } from './ModelFileField'
 
 const initialState: UploadState = {}
 const NAME_MAX = 80
@@ -19,7 +21,30 @@ function FieldError({ messages }: { messages?: string[] }) {
 }
 
 export default function EditModelForm({ model, categories }: { model: Model , categories: Category[] }) {
-    const [state, formAction, pending] = useActionState(editModel, initialState)
+    const router = useRouter()
+    const [progress, setProgress] = useState<number | null>(null)
+
+    // The .glb is too big for a Server Action (6MB limit), so it's taken out of the form
+    // and sent to its own route once the other changes are saved
+    async function submit(prevState: UploadState, formData: FormData): Promise<UploadState> {
+        const glb = formData.get('modelFile')
+        formData.delete('modelFile')
+        if (glb instanceof File) formData.set('hasModelFile', '1')
+
+        const result = await editModel(prevState, formData)
+        if (!result.modelId || !(glb instanceof File)) return result
+
+        try {
+            await uploadModelFile(result.modelId, glb, setProgress)
+        } catch (err: unknown) {
+            setProgress(null)
+            const reason = err instanceof Error ? err.message : 'Upload failed'
+            return { error: `Your changes were saved, but the new 3D file couldn't be uploaded (${reason}). Please try again.` }
+        }
+        router.push(`/3d-models/${result.modelId}`)
+        return result
+    }
+    const [state, formAction, pending] = useActionState(submit, initialState)
 
     // Controlled fields drive the live preview and survive a failed submit
     const [name, setName] = useState(model.name)
@@ -29,6 +54,19 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
     const imageFile = image?.file ?? null
     // A newly picked file's blob URL, otherwise the model's current image
     const previewUrl = image?.previewUrl ?? model.image
+    const [modelFile, setModelFile] = useState<{ file: File, url: string } | null>(null)
+    // A picture of the new 3D model, used as the new image when no image is chosen
+    const [snapshot, setSnapshot] = useState<Blob | null>(null)
+
+    function changeModelFile(file: File | null) {
+        setModelFile(file ? { file, url: URL.createObjectURL(file) } : null)
+        setSnapshot(null)
+    }
+    useEffect(() => () => {
+        if (modelFile) URL.revokeObjectURL(modelFile.url)
+    }, [modelFile])
+    // What the 3D preview shows: the newly picked file, else the current one
+    const viewerSrc = modelFile?.url ?? model.modelFile
 
     function changeImage(file: File | null) {
         setImage(file ? { file, previewUrl: URL.createObjectURL(file) } : null)
@@ -50,8 +88,10 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
     function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
-        formData.set('image', imageFile ?? new File([], ''))
+        const snapshotImage = modelFile && snapshot ? new File([snapshot], 'snapshot.png', { type: 'image/png' }) : null
+        formData.set('image', imageFile ?? snapshotImage ?? new File([], ''))
         formData.set('modelId', model.id.toString())
+        if (modelFile) formData.set('modelFile', modelFile.file)
         startTransition(() => formAction(formData))
     }
 
@@ -94,6 +134,9 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                     </div>
                     <FieldError messages={state.fieldErrors?.image} />
                 </div>
+
+                <ModelFileField file={modelFile?.file ?? null} onChange={changeModelFile}
+                    hasCurrent={model.modelFile !== null} serverError={state.fieldErrors?.modelFile?.[0]} />
 
                 {/* Name */}
                 <label className="block">
@@ -139,7 +182,7 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                     </Link>
                     <button type="submit" disabled={pending}
                         className="px-5 py-2 font-semibold text-white rounded-md cursor-pointer bg-orange-400 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-wait">
-                        {pending ? 'Saving...' : 'Save changes'}
+                        {pending ? (progress !== null ? `Uploading 3D model... ${progress}%` : 'Saving...') : 'Save changes'}
                     </button>
                 </div>
             </form>
@@ -148,8 +191,15 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
             <aside className="lg:sticky lg:top-6 h-fit">
                 <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
                 <div className="overflow-hidden bg-white rounded-lg shadow-md">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL */}
-                    <img src={previewUrl} alt="" className="object-cover w-full aspect-square bg-gray-100" />
+                    {viewerSrc ? (
+                        <div className="w-full aspect-square bg-model-bg">
+                            <ModelFileViewer src={viewerSrc} name={name || 'your model'}
+                                onSnapshot={modelFile ? setSnapshot : undefined} />
+                        </div>
+                    ) : (
+                        // eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL
+                        <img src={previewUrl} alt="" className="object-cover w-full aspect-square bg-model-bg" />
+                    )}
                     <div className="p-4">
                         <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{name || 'Model name'}</h3>
                         <p className="mt-2 text-sm text-gray-800 line-clamp-2">{description || 'Your description will appear here.'}</p>

@@ -8,21 +8,16 @@ import { getAllCategories } from '../../lib/database/categories'
 import { createModel, deleteModel } from '@/app/lib/database/database'
 import { revalidatePath } from 'next/cache'
 import { deleteImage, saveImage } from '@/app/lib/imageUtils'
-
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024
-const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
-const PLACEHOLDER_IMAGE = '/img/placeholder.png'
-
-const uploadSchema = z.object({
-    name: z.string().trim().min(3, 'Name must be at least 3 characters').max(80, 'Name must be 80 characters or less'),
-    description: z.string().trim().min(10, 'Description must be at least 10 characters').max(500, 'Description must be 500 characters or less'),
-    category: z.string().min(1, 'Choose a category'),
-})
+import { deleteModelFile } from '@/app/lib/modelFileUtils'
+import { checkImage, modelDetailsSchema, PLACEHOLDER_IMAGE } from '@/app/lib/modelValidation'
 
 
 export type UploadState = {
     error?: string
-    fieldErrors?: Partial<Record<'name' | 'description' | 'category' | 'image', string[]>>
+    // The saved model's id, returned instead of redirecting: the browser still has to send its .glb
+    // to /api/models/[id]/file (upload, and edit when the file is replaced)
+    modelId?: number
+    fieldErrors?: Partial<Record<'name' | 'description' | 'category' | 'image' | 'modelFile', string[]>>
 }
 
 
@@ -30,10 +25,11 @@ export async function deleteModelAction(modelId: number) {
     const session = await getServerSession(authOptions)
     if (!session) redirect('/login')
 
-    const imagePath = await deleteModel({ modelId, userId: Number(session.user.id) })
-    if (imagePath === null) return { error: 'Model not found' }
+    const deleted = await deleteModel({ modelId, userId: Number(session.user.id) })
+    if (deleted === null) return { error: 'Model not found' }
 
-    await deleteImage(imagePath)
+    await deleteImage(deleted.image)
+    await deleteModelFile(deleted.modelFile)
     revalidatePath('/dashboard')
     return {}
 }
@@ -42,7 +38,7 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
     const session = await getServerSession(authOptions)
     if (!session) redirect('/login?callbackUrl=/dashboard/upload')
 
-    const parsed = uploadSchema.safeParse({
+    const parsed = modelDetailsSchema.safeParse({
         name: formData.get('name'),
         description: formData.get('description'),
         category: formData.get('category'),
@@ -60,13 +56,12 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
 
     // Image is optional for now: without one, the placeholder image is used
     const image  = formData.get('image')
-    if (image instanceof File && image.size > 0) {
-        if (!IMAGE_TYPES.includes(image.type)) {
-            fieldErrors.image = ['Image must be PNG, JPG or WebP']
-        } else if (image.size > MAX_IMAGE_BYTES) {
-            fieldErrors.image = ['Image must be 5MB or smaller']
-        }
-    }
+    const imageError = checkImage(image)
+    if (imageError) fieldErrors.image = [imageError]
+
+    // Every model needs a 3D file. The file itself goes to /api/models/[id]/file next (too big for a Server Action),
+    // and the browser deletes the model again if that upload fails
+    if (formData.get('hasModelFile') !== '1') fieldErrors.modelFile = ['Choose a 3D model (.glb)']
 
     if (!parsed.success || Object.keys(fieldErrors).length > 0) {
         return { fieldErrors }
@@ -84,5 +79,6 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
     }
 
     revalidatePath('/dashboard')
-    redirect(`/3d-models/${modelId}`)
+    // The browser uploads the .glb next, then navigates itself
+    return { modelId }
 }

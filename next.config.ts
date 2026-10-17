@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       // Default is 1MB; model images can be up to 5MB plus the other form fields
-      bodySizeLimit: '6mb',
+      bodySizeLimit: '100mb',
     },
   },
 };

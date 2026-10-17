@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { authOptions } from '@/app/lib/auth'
 import { deleteUser, getUserById } from '@/app/lib/database/user'
 import { deleteImage } from '@/app/lib/imageUtils'
+import { deleteModelFile } from '@/app/lib/modelFileUtils'
 
 // Deletes the logged-in user's own account, after re-checking their password.
 // The caller signs out afterwards: the JWT session cookie outlives the database row.
@@ -23,10 +24,10 @@ export async function deleteAccountAction(password: string): Promise<{ error?: s
         return { error: 'Incorrect password' }
     }
 
-    const images = await deleteUser(userId)
-    if (images === null) return { error: 'Account not found' }
+    const models = await deleteUser(userId)
+    if (models === null) return { error: 'Account not found' }
 
-    await Promise.all(images.map(deleteImage))
+    await Promise.all(models.flatMap((m) => [deleteImage(m.image), deleteModelFile(m.modelFile)]))
     revalidatePath('/', 'layout')   // their models disappear from every listing
     return {}
 }

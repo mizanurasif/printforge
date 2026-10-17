@@ -11,7 +11,7 @@ export default function ModelCard({ model }: ModelCardProps) {
     return (
         <article className="relative block group hover:shadow-[0_5px_12px_rgba(0,0,0,0.1)] hover:-translate-y-[3px] transition-all">
             <div className="overflow-hidden transition-shadow bg-white rounded-lg shadow-md hover:shadow-lg">
-                <div className="relative aspect-square">
+                <div className="relative aspect-square bg-model-bg">
                     <Image
                         src={model.image}
                         alt={model.name}

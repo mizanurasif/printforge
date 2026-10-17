@@ -16,7 +16,7 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     slug          TEXT PRIMARY KEY,
-    display_name  TEXT NOT NULL
+    display_name  TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE models (
@@ -25,6 +25,7 @@ CREATE TABLE models (
     description  TEXT        NOT NULL,
     likes        INTEGER     NOT NULL DEFAULT 0,
     image        TEXT        NOT NULL,
+    model_file   TEXT,                   -- URL of the .glb in /public; NULL only while its upload is in progress
     category     TEXT        NOT NULL REFERENCES categories(slug),
     date_added   TIMESTAMPTZ NOT NULL DEFAULT now(),
     user_id      INTEGER     REFERENCES users(id) ON DELETE SET NULL
