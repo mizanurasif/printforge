@@ -192,13 +192,13 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                 <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
                 <div className="overflow-hidden bg-white rounded-lg shadow-md">
                     {viewerSrc ? (
-                        <div className="w-full aspect-square bg-gray-100">
-                            <ModelFileViewer src={viewerSrc} name={name || 'your model'} poster={modelFile ? undefined : model.image}
+                        <div className="w-full aspect-square bg-model-bg">
+                            <ModelFileViewer src={viewerSrc} name={name || 'your model'}
                                 onSnapshot={modelFile ? setSnapshot : undefined} />
                         </div>
                     ) : (
                         // eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL
-                        <img src={previewUrl} alt="" className="object-cover w-full aspect-square bg-gray-100" />
+                        <img src={previewUrl} alt="" className="object-cover w-full aspect-square bg-model-bg" />
                     )}
                     <div className="p-4">
                         <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{name || 'Model name'}</h3>

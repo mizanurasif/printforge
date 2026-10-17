@@ -249,7 +249,7 @@ export default function GenerateModelForm({ categories }: { categories: Category
             {/* Step 3: loading, then the 3D preview */}
             <aside className="lg:sticky lg:top-6 h-fit">
                 <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
-                <div className="relative w-full overflow-hidden bg-gray-100 rounded-lg shadow-md aspect-square">
+                <div className="relative w-full overflow-hidden bg-model-bg rounded-lg shadow-md aspect-square">
                     {glb ? (
                         <ModelFileViewer src={glb.url} name={name || 'your generated model'} onSnapshot={setSnapshot} />
                     ) : (

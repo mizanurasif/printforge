@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { notFound, redirect } from 'next/navigation'
 import { FaCube, FaHeart, FaTrophy } from 'react-icons/fa6'
-import ModelCard from '@/app/components/Model/ModelCard'
+import UserModelsGrid from '@/app/components/Model/UserModelsGrid'
 import StatCard from '@/app/components/dashboard/StatCard'
 import { authOptions } from '@/app/lib/auth'
-import { getPublicUserById, getUserModelsByID } from '@/app/lib/database/user'
+import { MODELS_PER_PAGE } from '@/app/lib/constants'
+import { getPublicUserById, getUserModels, getUserModelStats } from '@/app/lib/database/user'
 
-type UserPageProps = { params: Promise<{ id: string }> }
+type UserPageProps = { params: Promise<{ id: string }>, searchParams: Promise<{ page?: string }> }
 
 // "/user/abc" or "/user/1.5" would otherwise reach Postgres as an invalid integer
 function parseUserId(id: string): number | null {
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: UserPageProps): Promise<Metad
     return { title: user ? `${user.name} | PrintForge` : 'Creator not found | PrintForge' }
 }
 
-export default async function UserProfilePage({ params }: UserPageProps) {
+export default async function UserProfilePage({ params, searchParams }: UserPageProps) {
     const userId = parseUserId((await params).id)
     if (!userId) notFound()
 
@@ -32,9 +33,12 @@ export default async function UserProfilePage({ params }: UserPageProps) {
     const user = await getPublicUserById(userId)
     if (!user) notFound()
 
-    const models = await getUserModelsByID(userId, Number(session?.user.id) || undefined)
-    const totalLikes = models.reduce((sum, model) => sum + model.likes, 0)
-    const topModel = models[0] ?? null      // getUserModelsByID sorts by likes, most first
+    // The stats cover all their models; the grid shows one page of them
+    const { modelCount, totalLikes, topModel } = await getUserModelStats(userId)
+    const totalPages = Math.max(Math.ceil(modelCount / MODELS_PER_PAGE), 1)
+    const page = Number((await searchParams).page) || 1
+    if (!Number.isInteger(page) || page < 1 || page > totalPages) redirect(`/user/${userId}`)
+    const models = await getUserModels({ userId, page, modelsPerPage: MODELS_PER_PAGE, viewerId: Number(session?.user.id) || undefined })
 
     const initials = user.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
     const joined = user.createdAt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -54,7 +58,7 @@ export default async function UserProfilePage({ params }: UserPageProps) {
 
             {/* Stats */}
             <section aria-label={`${user.name}'s stats`} className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-3">
-                <StatCard label="Models uploaded" value={models.length} icon={<FaCube />} />
+                <StatCard label="Models uploaded" value={modelCount} icon={<FaCube />} />
                 <StatCard label="Likes received" value={totalLikes.toLocaleString('en-US')} icon={<FaHeart />} />
                 <StatCard label="Most liked model" value={topModel ? topModel.name : '—'} icon={<FaTrophy />}
                     hint={topModel ? `${topModel.likes.toLocaleString('en-US')} likes` : undefined} />
@@ -64,13 +68,11 @@ export default async function UserProfilePage({ params }: UserPageProps) {
             <section>
                 <div className="flex items-baseline justify-between mb-4">
                     <h2 className="text-xl font-bold">Models by {user.name}</h2>
-                    <span className="text-sm text-gray-500">{models.length} total</span>
+                    <span className="text-sm text-gray-500">{modelCount} total</span>
                 </div>
 
-                {models.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {models.map((model) => <ModelCard key={model.id} model={model} />)}
-                    </div>
+                {modelCount > 0 ? (
+                    <UserModelsGrid models={models} totalPages={totalPages} currentPage={page} />
                 ) : (
                     <div className="flex flex-col items-center gap-3 px-4 py-16 text-center bg-white border border-gray-300 border-dashed rounded-lg">
                         <FaCube className="text-4xl text-gray-300" aria-hidden="true" />

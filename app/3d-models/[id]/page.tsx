@@ -1,7 +1,7 @@
 import type { ModelDetailPageProps } from "@/app/lib/models"
 import { getModelById } from "@/app/lib/database/database"
 import Link from "next/link"
-import { FaPen } from "react-icons/fa6"
+import { FaDownload, FaPen } from "react-icons/fa6"
 import DeleteModelButton from "@/app/components/dashboard/DeleteModelButton"
 import LikeButton from "@/app/components/Model/LikeButton"
 import ModelPreview from "@/app/components/Model/ModelPreview"
@@ -48,6 +48,14 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
               {model.description}
             </p>
           </div>
+
+          {/* The .glb is a static file in /public, so a plain link with "download" saves it under the model's name */}
+          {model.modelFile && (
+            <a href={model.modelFile} download={`${model.name.trim().replace(/[^\w-]+/g, '-')}.glb`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 mb-6 font-semibold text-white transition-colors rounded-md w-fit bg-orange-400 hover:bg-orange-500">
+              <FaDownload aria-hidden="true" /> Download .glb
+            </a>
+          )}
 
           <footer className="text-sm text-gray-500">
             {model.creatorName && (

@@ -187,12 +187,12 @@ export default function UploadModelForm({ categories }: { categories: Category[]
                 <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
                 <div className="overflow-hidden bg-white rounded-lg shadow-md">
                     {modelFile ? (
-                        <div className="w-full aspect-square bg-gray-100">
+                        <div className="w-full aspect-square bg-model-bg">
                             <ModelFileViewer src={modelFile.url} name={name || 'your model'} onSnapshot={setSnapshot} />
                         </div>
                     ) : (
                         // eslint-disable-next-line @next/next/no-img-element -- may be a blob: URL
-                        <img src={previewUrl ?? PLACEHOLDER_IMAGE} alt="" className="object-cover w-full aspect-square bg-gray-100" />
+                        <img src={previewUrl ?? PLACEHOLDER_IMAGE} alt="" className="object-cover w-full aspect-square bg-model-bg" />
                     )}
                     <div className="p-4">
                         <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{name || 'Model name'}</h3>

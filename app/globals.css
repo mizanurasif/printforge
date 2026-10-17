@@ -2,6 +2,8 @@
 
 @theme {
   --color-orange-accent: #F77D36;
+  /* Behind model pictures and the 3D viewer: light sky blue, so white models stand out */
+  --color-model-bg: #bae6fd;
 }
 
 h1,h2,h3,h4,h5,h6 {

@@ -19,9 +19,9 @@ export default function ModelPreview({ image, modelFile, name }: {
     name: string
 }) {
     return (
-        <figure className="relative overflow-hidden rounded-lg shadow-lg aspect-square bg-gray-100">
+        <figure className="relative overflow-hidden rounded-lg shadow-lg aspect-square bg-model-bg">
             {modelFile ? (
-                <ModelViewer src={modelFile} name={name} poster={image} />
+                <ModelViewer src={modelFile} name={name} />
             ) : (
                 <Image width={500} height={500} src={image} alt={name} loading="eager"
                     className="absolute inset-0 object-cover w-full h-full" />

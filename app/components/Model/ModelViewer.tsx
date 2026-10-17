@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -20,7 +19,7 @@ function pickClip(clips: THREE.AnimationClip[]): THREE.AnimationClip | undefined
     return moving[0]
 }
 
-// Copies the WebGL canvas into a square PNG on the catalog's grey background (the canvas itself is transparent).
+// Copies the WebGL canvas into a square PNG on the model background (bg-model-bg in globals.css) (the canvas itself is transparent).
 // Must run right after a render: once the browser has shown the frame, the WebGL buffer is cleared.
 function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => void) {
     const size = Math.min(canvas.width, canvas.height)
@@ -28,7 +27,7 @@ function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => vo
     square.width = square.height = size
     const ctx = square.getContext('2d')
     if (!ctx) return
-    ctx.fillStyle = '#f3f4f6'
+    ctx.fillStyle = '#bae6fd'
     ctx.fillRect(0, 0, size, size)
     ctx.drawImage(canvas, (canvas.width - size) / 2, (canvas.height - size) / 2, size, size, 0, 0, size, size)
     square.toBlob((blob) => { if (blob) onSnapshot(blob) }, 'image/png')
@@ -36,14 +35,12 @@ function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => vo
 
 // Only load this through ModelPreview (next/dynamic, ssr: false): WebGL doesn't exist on the server.
 // See docs/3D_VIEWER_GUIDE.md for what each numbered part does.
-// poster: the model's picture, shown until the 3D file has loaded
 // animate: play one of the file's animations, if it has any (see pickClip)
 // zoom: false stops the wheel and touch from zooming, so the page still scrolls over the model
 // onSnapshot: called once with a PNG of the first frame, e.g. to use as an uploaded model's picture
-export default function ModelViewer({ src, name, poster, animate = true, zoom = true, onSnapshot }: {
+export default function ModelViewer({ src, name, animate = true, zoom = true, onSnapshot }: {
     src: string
     name: string
-    poster?: string
     animate?: boolean
     zoom?: boolean
     onSnapshot?: (image: Blob) => void
@@ -162,12 +159,12 @@ export default function ModelViewer({ src, name, poster, animate = true, zoom = 
     return (
         <div ref={mountRef} className={`relative w-full h-full ${zoom ? 'touch-none' : 'touch-pan-y'}`} role="img" aria-label={`3D view of ${name}`}>
             {status === 'loading' && (
-                <>
-                    {/* The <Image> isn't showing the 3D model. It shows the poster, the model's thumbnail PNG, while the 3D file downloads */}
-                    {poster && <Image width={500} height={500} src={poster} alt="" loading="eager"
-                        className="absolute inset-0 object-cover w-full h-full" />}
-                    <p className="absolute inset-x-0 bottom-3 text-sm text-center text-gray-500">Loading 3D model...</p>
-                </>
+                // No picture while loading: the saved pictures have their own background, which wouldn't match the viewer's
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-gray-500">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- a small static svg */}
+                    <img src="/img/spinner.svg" alt="" className="w-12 h-12" />
+                    Loading 3D model...
+                </div>
             )}
             {status === 'error' && (
                 <p className="absolute inset-0 flex items-center justify-center text-red-600">Couldn&apos;t load the 3D model.</p>
