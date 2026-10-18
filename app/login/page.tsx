@@ -23,9 +23,17 @@ export default async function LoginPage({ searchParams }: {
     if (session) redirect(target)
 
     return (
-        <main className="max-w-sm px-4 mx-auto mt-16">
-            <h1 className="mb-6 text-3xl font-bold text-center">Log in</h1>
+        <main className="relative flex-1 overflow-hidden pastel-wash">
+            <div aria-hidden="true" className="grid-floor" />
+            <span aria-hidden="true" className="axis axis-x" />
+            <span aria-hidden="true" className="axis axis-z" />
+            <div className="relative max-w-md px-4 py-14 mx-auto md:py-20">
+            <div className="p-7 card md:p-9">
+            <h1 className="mb-1.5 text-3xl font-bold text-center">Welcome back</h1>
+            <p className="mb-7 text-center text-muted">Log in to like models, follow makers and upload your own.</p>
             <LoginForm callbackUrl={target} registered={registered === '1'} />
+            </div>
+            </div>
         </main>
     )
 }

@@ -37,7 +37,7 @@ export default function DeleteModelButton({ id, name, className }: { id: number,
     return (
         <>
             <button type="button" onClick={openDialog} aria-label={`Delete ${name}`} title="Delete"
-                className={`${className} text-gray-600 cursor-pointer hover:bg-red-50 hover:text-red-600`}>
+                className={`${className} text-muted cursor-pointer hover:bg-red-50 hover:text-red-600`}>
                 <FaTrash />
             </button>
 
@@ -45,15 +45,15 @@ export default function DeleteModelButton({ id, name, className }: { id: number,
             <dialog ref={dialogRef} aria-labelledby={`delete-title-${id}`}
                 onCancel={(e) => { if (pending) e.preventDefault() }}
                 onClick={(e) => { if (e.target === e.currentTarget) closeDialog() }}
-                className="w-[calc(100%-2rem)] max-w-md p-0 m-auto bg-white rounded-lg shadow-xl backdrop:bg-black/50">
+                className="w-[calc(100%-2rem)] max-w-md p-0 m-auto bg-white rounded-2xl shadow-xl backdrop:bg-black/50">
                 <div className="p-6">
                     <div className="flex items-start gap-4">
                         <div className="flex items-center justify-center w-10 h-10 text-red-600 bg-red-100 rounded-full shrink-0">
                             <FaTriangleExclamation aria-hidden="true" />
                         </div>
                         <div className="min-w-0">
-                            <h2 id={`delete-title-${id}`} className="text-lg font-semibold text-gray-900">Delete model?</h2>
-                            <p className="mt-1 text-sm text-gray-600 break-words">
+                            <h2 id={`delete-title-${id}`} className="text-lg font-semibold text-ink">Delete model?</h2>
+                            <p className="mt-1 text-sm text-muted break-words">
                                 &ldquo;{name}&rdquo; and its image will be permanently deleted. This can&apos;t be undone.
                             </p>
                             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -62,11 +62,11 @@ export default function DeleteModelButton({ id, name, className }: { id: number,
 
                     <div className="flex flex-col-reverse gap-3 mt-6 sm:flex-row sm:justify-end">
                         <button type="button" onClick={closeDialog} disabled={pending} autoFocus
-                            className="px-4 py-2 font-semibold text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 disabled:opacity-60">
+                            className="btn-ghost border-line">
                             Cancel
                         </button>
                         <button type="button" onClick={handleDelete} disabled={pending}
-                            className="px-4 py-2 font-semibold text-white bg-red-600 rounded-md cursor-pointer hover:bg-red-700 disabled:opacity-60 disabled:cursor-wait">
+                            className="px-4 py-2 font-semibold text-white bg-red-600 rounded-full cursor-pointer hover:bg-red-700 disabled:opacity-60 disabled:cursor-wait">
                             {pending ? 'Deleting...' : 'Delete'}
                         </button>
                     </div>

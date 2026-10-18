@@ -44,15 +44,16 @@ export default async function UserProfilePage({ params, searchParams }: UserPage
     const joined = user.createdAt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
     return (
-        <main className="container max-w-6xl px-4 py-8 mx-auto">
+        <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
             {/* Header */}
-            <section className="flex items-center gap-4 mb-8">
-                <div className="flex items-center justify-center text-lg font-bold text-white rounded-full w-14 h-14 shrink-0 bg-orange-accent" aria-hidden="true">
+            <section className="flex items-center gap-4 p-6 mb-8 rounded-3xl pastel-wash md:p-8">
+                <div className="flex items-center justify-center text-lg font-bold text-white rounded-full w-16 h-16 shrink-0 bg-gradient-to-br from-indigo to-pink ring-4 ring-white/70" aria-hidden="true">
                     {initials}
                 </div>
                 <div className="min-w-0">
-                    <h1 className="text-2xl font-bold truncate sm:text-3xl">{user.name}</h1>
-                    <p className="text-sm text-gray-500">Joined {joined}</p>
+                    <p className="mb-1 eyebrow">Creator</p>
+                    <h1 className="text-2xl font-bold tracking-tight truncate sm:text-3xl">{user.name}</h1>
+                    <p className="text-sm text-muted">Joined {joined}</p>
                 </div>
             </section>
 
@@ -68,15 +69,15 @@ export default async function UserProfilePage({ params, searchParams }: UserPage
             <section>
                 <div className="flex items-baseline justify-between mb-4">
                     <h2 className="text-xl font-bold">Models by {user.name}</h2>
-                    <span className="text-sm text-gray-500">{modelCount} total</span>
+                    <span className="text-sm text-muted">{modelCount} total</span>
                 </div>
 
                 {modelCount > 0 ? (
                     <UserModelsGrid models={models} totalPages={totalPages} currentPage={page} />
                 ) : (
-                    <div className="flex flex-col items-center gap-3 px-4 py-16 text-center bg-white border border-gray-300 border-dashed rounded-lg">
-                        <FaCube className="text-4xl text-gray-300" aria-hidden="true" />
-                        <p className="font-semibold text-gray-800">{user.name} hasn&apos;t uploaded any models yet</p>
+                    <div className="flex flex-col items-center gap-3 px-4 py-16 text-center bg-white/70 border-2 border-line border-dashed rounded-3xl">
+                        <FaCube className="text-4xl text-muted/40" aria-hidden="true" />
+                        <p className="font-semibold text-ink">{user.name} hasn&apos;t uploaded any models yet</p>
                     </div>
                 )}
             </section>

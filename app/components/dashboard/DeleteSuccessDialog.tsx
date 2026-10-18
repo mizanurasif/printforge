@@ -19,15 +19,15 @@ export default function DeleteSuccessDialog({ name }: { name: string }) {
         <dialog ref={dialogRef} aria-labelledby="delete-success-title"
             onClose={() => router.replace('/dashboard', { scroll: false })}
             onClick={(e) => { if (e.target === e.currentTarget) dialogRef.current?.close() }}
-            className="w-[calc(100%-2rem)] max-w-sm p-0 m-auto bg-white rounded-lg shadow-xl backdrop:bg-black/50">
+            className="w-[calc(100%-2rem)] max-w-sm p-0 m-auto bg-white rounded-2xl shadow-xl backdrop:bg-black/50">
             <div className="flex flex-col items-center p-6 text-center">
                 <div className="flex items-center justify-center w-12 h-12 text-2xl text-green-600 bg-green-100 rounded-full">
                     <FaCircleCheck aria-hidden="true" />
                 </div>
-                <h2 id="delete-success-title" className="mt-4 text-lg font-semibold text-gray-900">Model deleted</h2>
-                <p className="mt-1 text-sm text-gray-600 break-words">&ldquo;{name}&rdquo; was deleted successfully.</p>
+                <h2 id="delete-success-title" className="mt-4 text-lg font-semibold text-ink">Model deleted</h2>
+                <p className="mt-1 text-sm text-muted break-words">&ldquo;{name}&rdquo; was deleted successfully.</p>
                 <button type="button" onClick={() => dialogRef.current?.close()} autoFocus
-                    className="w-full px-4 py-2 mt-6 font-semibold text-white rounded-md cursor-pointer bg-orange-400 hover:bg-orange-500">
+                    className="w-full mt-6 btn-primary">
                     OK
                 </button>
             </div>

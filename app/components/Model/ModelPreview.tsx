@@ -9,7 +9,7 @@ import Image from 'next/image'
 
 const ModelViewer = dynamic(() => import('./ModelViewer'), {
     ssr: false,
-    loading: () => <p className="flex items-center justify-center h-full text-gray-500">Loading 3D viewer...</p>,
+    loading: () => <p className="flex items-center justify-center h-full text-muted">Loading 3D viewer...</p>,
 })
 
 // Shows the 3D model when there is one, otherwise the image
@@ -19,7 +19,7 @@ export default function ModelPreview({ image, modelFile, name }: {
     name: string
 }) {
     return (
-        <figure className="relative overflow-hidden rounded-lg shadow-lg aspect-square bg-model-bg">
+        <figure className="relative overflow-hidden border rounded-3xl border-line aspect-square bg-model-bg shadow-[0_24px_48px_-32px_rgb(23_21_43/0.5)]">
             {modelFile ? (
                 <ModelViewer src={modelFile} name={name} />
             ) : (

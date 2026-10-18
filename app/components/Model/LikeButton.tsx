@@ -49,8 +49,8 @@ export default function LikeButton({ modelId, initialLikes, initialLiked, classN
         <button type="button" onClick={handleLike} disabled={isPending}
             aria-pressed={liked} aria-label={`${liked ? 'Unlike' : 'Like'} (${likes} ${likes === 1 ? 'like' : 'likes'})`}
             className={`flex items-center cursor-pointer disabled:cursor-wait ${className}`}>
-            <Icon className={`${iconClassName} mr-1 ${liked ? 'text-red-500' : 'text-gray-400'}`} aria-hidden="true" />
-            <span>{likes}</span>
+            <Icon className={`${iconClassName} mr-1 transition-colors ${liked ? 'text-pink' : 'text-muted/60'}`} aria-hidden="true" />
+            <span className={`tabular-nums ${liked ? 'text-pink-ink' : ''}`}>{likes}</span>
         </button>
     )
 }

@@ -1,10 +1,10 @@
 import "./globals.css";
-import { Albert_Sans, Montserrat_Alternates } from "next/font/google";
+import { Figtree, Montserrat_Alternates } from "next/font/google";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Providers from "./components/Providers";
 
-const albertSans = Albert_Sans({
+const figtree = Figtree({
   subsets: ["latin"],
   display: "swap"
 })
@@ -19,11 +19,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en">
-      <body className={`${albertSans.className} ${montserrat_Alternates.variable} flex flex-col min-h-screen`}>
+      <body className={`${figtree.className} ${montserrat_Alternates.variable} flex flex-col min-h-screen bg-page text-ink antialiased`}>
         <Providers>
           <Navbar/>
           {/* flex-1 pushes the footer to the bottom on short pages */}
-          <div className="flex-1">{children}</div>
+          <div className="flex flex-col flex-1">{children}</div>
           <Footer/>
         </Providers>
       </body>

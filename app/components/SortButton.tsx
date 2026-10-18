@@ -29,7 +29,8 @@ export default function SortButton({children, sort,startTransition}:{
     return (
     <button
         onClick={handleSort}
-        className={`px-3 py-1.5 text-sm rounded-full border cursor-pointer ${isActive ? "text-white bg-orange-400 border-orange-400" : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+        aria-pressed={isActive}
+        className={`px-3.5 py-1.5 text-sm font-medium rounded-full border cursor-pointer transition-colors ${isActive ? "text-white bg-ink border-ink" : 'bg-white border-line text-muted hover:text-ink hover:border-ink'}`}
     >
         {children}
     </button>

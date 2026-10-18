@@ -1,6 +1,7 @@
 import Form from 'next/form'
 import { usePathname, useRouter } from 'next/navigation'
 import type { TransitionStartFunction } from 'react'
+import { FaMagnifyingGlass } from 'react-icons/fa6'
 
 export default function SearchForm({search,startTransition}:{
   search?:string,
@@ -20,15 +21,18 @@ export default function SearchForm({search,startTransition}:{
   return (
     <Form 
       action={handleSearch}
-      className="w-full px-5 md:px-0 md:max-w-xl">
+      role="search"
+      className="relative w-full md:max-w-xl">
+      <FaMagnifyingGlass aria-hidden="true" className="absolute w-4 h-4 -translate-y-1/2 pointer-events-none left-5 top-1/2 text-muted" />
       <input
-        type="text"
+        type="search"
         defaultValue={search}
         id="search"
         name="search"
-        placeholder="E.g. dragon"
+        aria-label="Search models"
+        placeholder="Search models, e.g. dragon"
         autoComplete="off"
-        className="w-full py-3 pl-5 pr-5 text-sm placeholder-gray-500 bg-white border border-[#606060] rounded-full focus:border-[#606060] focus:outline-none focus:ring-0 md:text-base"
+        className="w-full py-3 pr-5 text-sm bg-white border rounded-full pl-12 placeholder:text-muted/70 border-line shadow-[0_10px_24px_-20px_rgb(23_21_43/0.5)] focus:outline-2 focus:outline-indigo md:text-base"
       />
     </Form>
   )

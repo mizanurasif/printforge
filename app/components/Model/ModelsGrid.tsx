@@ -20,16 +20,19 @@ export default function ModelsGrid({ models, categoryName, search, isPending, st
     if (categoryName && search) title = `Search results for "${search}" in ${categoryName}`
     return (
         <>
-            <div className="container px-4 py-8 mx-auto">
-                <div className="flex flex-col gap-2 md:flex-row md:justify-between mb-8">
-                    <h1 className="text-3xl font-bold">{title}</h1>
+            <div className="pt-8">
+                <div className="flex flex-col gap-3 mb-6 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p className="mb-2 eyebrow">Library</p>
+                        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+                    </div>
                     <SortControls startTransition={startTransition}/>
                 </div>
                 
                 {isPending ? (
                     <LoadingUI>Loading models...</LoadingUI>
                 ) : models.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     
                     {models.map((model)=>(
                     <ModelCard

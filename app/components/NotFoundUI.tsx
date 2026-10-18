@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FaCube } from 'react-icons/fa6'
 export default function NotFoundUI({title, subtitle,link_text,link_href}:{
     title:string,
     subtitle:string,
@@ -6,14 +7,13 @@ export default function NotFoundUI({title, subtitle,link_text,link_href}:{
     link_href:string
 }){
   return (
-    <main className="flex flex-col items-center justify-center gap-2 mt-10">
-      <span className="mt-10 text-7xl">🙈</span>
-      <h1 className="text-4xl font-semibold">{title}</h1>
-      <p>{subtitle}</p>
-      <Link
-        href={link_href}
-        className="border-2 border-orange-400 px-3 py-3 rounded-lg text-orange-400 font-semibold"
-      >
+    <main className="flex flex-col items-center justify-center gap-3 px-4 py-16 text-center">
+      <span aria-hidden="true" className="grid w-16 h-16 mb-2 place-items-center rounded-2xl bg-lavender text-indigo">
+        <FaCube className="w-7 h-7" />
+      </span>
+      <h1 className="text-3xl font-bold">{title}</h1>
+      <p className="text-muted">{subtitle}</p>
+      <Link href={link_href} className="mt-3 btn-primary">
 	      {link_text}
       </Link>
   </main>

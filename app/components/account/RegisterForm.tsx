@@ -12,32 +12,32 @@ export default function RegisterForm() {
     return (
         <form action={formAction} className="flex flex-col gap-4">
             <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Name</span>
+                <span className="text-sm font-semibold">Name</span>
                 <input name="name" type="text" required autoComplete="name"
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent" />
+                    className="input" />
                 {state.fieldErrors?.name && <span className="text-sm text-red-600">{state.fieldErrors.name[0]}</span>}
             </label>
             <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Email</span>
-                <input name="email" type="email" required autoComplete="email"
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent" />
+                <span className="text-sm font-semibold">Email</span>
+                <input name="email" type="email" required autoComplete="email" placeholder="you@example.com"
+                    className="input" />
                 {state.fieldErrors?.email && <span className="text-sm text-red-600">{state.fieldErrors.email[0]}</span>}
             </label>
             <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Password</span>
+                <span className="text-sm font-semibold">Password</span>
                 <input name="password" type="password" required minLength={8} autoComplete="new-password"
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent" />
+                    className="input" />
                 {state.fieldErrors?.password && <span className="text-sm text-red-600">{state.fieldErrors.password[0]}</span>}
             </label>
 
-            {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+            {state.error && <p role="alert" className="text-sm text-red-600">{state.error}</p>}
 
             <button type="submit" disabled={pending}
-                className="py-2 font-semibold text-white bg-orange-400 rounded-md cursor-pointer hover:bg-orange-500 disabled:opacity-60">
+                className="w-full mt-1 btn-primary min-h-12">
                 {pending ? 'Creating account...' : 'Create account'}
             </button>
-            <p className="text-sm text-center text-gray-600">
-                Already have an account? <Link href="/login" className="text-orange-accent">Log in</Link>
+            <p className="text-sm text-center text-muted">
+                Already have an account? <Link href="/login" className="font-semibold text-pink-ink hover:underline">Log in</Link>
             </p>
         </form>
     )

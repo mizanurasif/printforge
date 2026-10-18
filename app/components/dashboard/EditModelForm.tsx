@@ -13,7 +13,7 @@ const initialState: UploadState = {}
 const NAME_MAX = 80
 const DESCRIPTION_MAX = 500
 
-const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent'
+const inputClass = 'input'
 
 function FieldError({ messages }: { messages?: string[] }) {
     if (!messages?.length) return null
@@ -99,33 +99,33 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
 
     return (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
-            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5 p-6 bg-white border border-line rounded-2xl shadow-sm">
                 {/* Image */}
                 <div>
-                    <span className="block mb-1 text-sm font-medium">Image <span className="font-normal text-gray-500">(optional)</span></span>
-                    <div className="flex items-center gap-4 p-3 border border-gray-200 rounded-md">
+                    <span className="block mb-1 text-sm font-medium">Image <span className="font-normal text-muted">(optional)</span></span>
+                    <div className="flex items-center gap-4 p-3 border border-line rounded-xl">
                         {/* eslint-disable-next-line @next/next/no-img-element -- blob: preview URLs can't go through next/image */}
-                        <img src={previewUrl} alt="Model image" className="object-cover w-20 h-20 rounded-md" />
+                        <img src={previewUrl} alt="Model image" className="object-cover w-20 h-20 rounded-xl" />
                         <div className="flex-1 min-w-0">
                             {imageFile ? (
                                 <>
                                     <p className="text-sm font-medium truncate">{imageFile.name}</p>
-                                    <p className="text-xs text-gray-500">{(imageFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <p className="text-xs text-muted">{(imageFile.size / 1024 / 1024).toFixed(2)} MB</p>
                                 </>
                             ) : (
                                 <>
                                     <p className="text-sm font-medium">Current image</p>
-                                    <p className="text-xs text-gray-500">PNG, JPG or WebP, up to 5MB</p>
+                                    <p className="text-xs text-muted">PNG, JPG or WebP, up to 5MB</p>
                                 </>
                             )}
                         </div>
                         {imageFile ? (
                             <button type="button" onClick={() => changeImage(null)} aria-label="Undo image change" title="Keep current image"
-                                className="flex items-center justify-center w-8 h-8 text-gray-500 rounded-md cursor-pointer hover:bg-gray-100 hover:text-red-600">
+                                className="flex items-center justify-center w-8 h-8 text-muted rounded-xl cursor-pointer hover:bg-mist hover:text-red-600">
                                 <FaXmark />
                             </button>
                         ) : (
-                            <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:border-orange-accent hover:bg-orange-50/40">
+                            <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-ink border border-line rounded-xl cursor-pointer hover:border-indigo hover:bg-lavender/30">
                                 <FaCloudArrowUp aria-hidden="true" /> Change
                                 <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only"
                                     onChange={handleUploadedImage} />
@@ -142,7 +142,7 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                 <label className="block">
                     <span className="flex justify-between mb-1 text-sm font-medium">
                         Name
-                        <span className="font-normal text-gray-400">{name.length}/{NAME_MAX}</span>
+                        <span className="font-normal text-muted/70">{name.length}/{NAME_MAX}</span>
                     </span>
                     <input name="name" type="text" value={name} maxLength={NAME_MAX} placeholder="E.g. Articulated Dragon"
                         onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -153,7 +153,7 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                 <label className="block">
                     <span className="flex justify-between mb-1 text-sm font-medium">
                         Description
-                        <span className="font-normal text-gray-400">{description.length}/{DESCRIPTION_MAX}</span>
+                        <span className="font-normal text-muted/70">{description.length}/{DESCRIPTION_MAX}</span>
                     </span>
                     <textarea name="description" rows={5} value={description} maxLength={DESCRIPTION_MAX}
                         placeholder="What is it, how does it print, any supports needed?"
@@ -177,11 +177,11 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                 {state.error && <p className="text-sm text-red-600">{state.error}</p>}
 
                 <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-                    <Link href="/dashboard" className="px-4 py-2 font-semibold text-center text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50">
+                    <Link href="/dashboard" className="btn-ghost border-line">
                         Cancel
                     </Link>
                     <button type="submit" disabled={pending}
-                        className="px-5 py-2 font-semibold text-white rounded-md cursor-pointer bg-orange-400 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-wait">
+                        className="btn-primary">
                         {pending ? (progress !== null ? `Uploading 3D model... ${progress}%` : 'Saving...') : 'Save changes'}
                     </button>
                 </div>
@@ -189,8 +189,8 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
 
             {/* Live preview */}
             <aside className="lg:sticky lg:top-6 h-fit">
-                <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
-                <div className="overflow-hidden bg-white rounded-lg shadow-md">
+                <p className="mb-2 text-sm font-medium text-muted">Preview</p>
+                <div className="overflow-hidden bg-white rounded-2xl shadow-md">
                     {viewerSrc ? (
                         <div className="w-full aspect-square bg-model-bg">
                             <ModelFileViewer src={viewerSrc} name={name || 'your model'}
@@ -201,13 +201,13 @@ export default function EditModelForm({ model, categories }: { model: Model , ca
                         <img src={previewUrl} alt="" className="object-cover w-full aspect-square bg-model-bg" />
                     )}
                     <div className="p-4">
-                        <h3 className="text-xl font-semibold text-gray-800 line-clamp-2">{name || 'Model name'}</h3>
-                        <p className="mt-2 text-sm text-gray-800 line-clamp-2">{description || 'Your description will appear here.'}</p>
-                        <span className="inline-block px-3 py-1 mt-2 text-sm text-gray-800 border border-gray-400 rounded-full">
+                        <h3 className="text-xl font-semibold text-ink line-clamp-2">{name || 'Model name'}</h3>
+                        <p className="mt-2 text-sm text-ink line-clamp-2">{description || 'Your description will appear here.'}</p>
+                        <span className="inline-block px-3 py-1 mt-2 text-sm text-ink border border-line rounded-full">
                             {categoryLabel ?? 'Category'}
                         </span>
-                        <div className="flex items-center mt-2 text-gray-600">
-                            <FaHeart className="w-4 h-4 mr-1 text-gray-300" aria-hidden="true" /> 0
+                        <div className="flex items-center mt-2 text-muted">
+                            <FaHeart className="w-4 h-4 mr-1 text-muted/40" aria-hidden="true" /> 0
                         </div>
                     </div>
                 </div>

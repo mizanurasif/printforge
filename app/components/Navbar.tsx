@@ -1,46 +1,35 @@
 'use client'
 
-import Image from 'next/image';
-import printforgeLogo from '@/public/printforge-logo.svg';
-import printforgeLogoIcon from '@/public/printforge-logo-icon.svg';
 import Link from "next/link";
 import NavLink from './NavLink';
+import Logo from './Logo';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
+import { FaRegCircleUser } from 'react-icons/fa6';
 
 export default function Navbar(){
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   return(
   <>
-      <header className="w-full bg-white">
-        <nav className="flex justify-between px-6 py-4">
-          <Link href="/">
-            <div className="relative">
-              {/* Desktop Logo */}
-              <Image
-                src={printforgeLogo}
-                alt="PrintForge Logo"
-                className="w-[200px] h-auto hidden md:block"
-              />
-              {/* Mobile Logo */}
-              <Image
-                src={printforgeLogoIcon}
-                alt="PrintForge Logo"
-                className="w-[40px] h-auto block md:hidden"
-              />
-            </div>
+      {/* Sticky, translucent bar so the pastel page shows through as you scroll */}
+      <header className="sticky top-0 z-30 w-full border-b border-line bg-white/55 backdrop-blur-md">
+        <nav className="flex flex-wrap items-center justify-between max-w-7xl gap-x-6 gap-y-2 px-6 py-3.5 mx-auto">
+          <Link href="/" aria-label="PrintForge home">
+            <Logo />
           </Link>
-          <ul className="flex items-center gap-2.5">
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
               <NavLink href="/3d-models" isActive={pathname.startsWith("/3d-models")}>3D Models</NavLink>
               {/* Shown to everyone: logged-out users are sent to /login first (proxy.ts and the page check) */}
               <NavLink href="/generate" isActive={pathname.startsWith("/generate")}>3D Construction</NavLink>
               <NavLink href="/about" isActive={pathname === "/about"}>About</NavLink>
               {status === "authenticated" ? (
                 <>
-                  <NavLink href="/dashboard" isActive={pathname.startsWith("/dashboard")}>{session.user.name}</NavLink>
-                  <li className="text-sm uppercase">
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="px-4 py-2 text-gray-700 rounded-md cursor-pointer hover:text-orange-accent">
+                  <NavLink href="/dashboard" isActive={pathname.startsWith("/dashboard")}>
+                    <span className="inline-flex items-center gap-1.5"><FaRegCircleUser aria-hidden="true" className="w-3.5 h-3.5" />My account</span>
+                  </NavLink>
+                  <li className="text-[12.5px] font-medium tracking-[0.06em] uppercase">
+                    <button onClick={() => signOut({ callbackUrl: "/" })} className="py-1.5 border-b-2 border-transparent cursor-pointer text-muted transition-colors hover:text-ink">
                       Logout
                     </button>
                   </li>
@@ -48,7 +37,9 @@ export default function Navbar(){
               ) : status === "unauthenticated" ? (
                 <>
                   <NavLink href="/login" isActive={pathname === "/login"}>Login</NavLink>
-                  <NavLink href="/register" isActive={pathname === "/register"}>Register</NavLink>
+                  <li>
+                    <Link href="/register" className="btn-primary px-4 py-2 text-[12.5px] tracking-[0.06em] uppercase">Register</Link>
+                  </li>
                 </>
               ) : null}
           </ul>

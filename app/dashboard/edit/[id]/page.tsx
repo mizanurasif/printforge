@@ -25,12 +25,12 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
     const categories = await getAllCategories()
 
     return (
-        <main className="container max-w-6xl px-4 py-8 mx-auto">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-gray-600 hover:text-orange-accent">
+        <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-muted hover:text-pink-ink">
                 <FaArrowLeft aria-hidden="true" /> Back to dashboard
             </Link>
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Edit {model.name}</h1>
-            <p className="mb-8 text-gray-500">Update your model&apos;s details, or replace its image or 3D model.</p>
+            <p className="mb-8 text-muted">Update your model&apos;s details, or replace its image or 3D model.</p>
 
             <EditModelForm categories={categories} model={model} />
         </main>
