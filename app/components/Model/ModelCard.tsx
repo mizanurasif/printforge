@@ -3,6 +3,7 @@ import Pill from "@/app/components/Pill"
 import LikeButton from "@/app/components/Model/LikeButton"
 import { ModelCardProps } from "@/app/lib/models"
 import Image from "next/image"
+import { categoryLabel } from "@/app/components/categoryLabel"
 
 // The card can't be one big <Link>: the creator link inside it would be a link inside a link (invalid HTML).
 // Instead the title link stretches over the whole card (after:inset-0), and the creator link sits above it (z-10).
@@ -39,7 +40,7 @@ export default function ModelCard({ model }: ModelCardProps) {
                     </p>
                 )}
                 <div className="flex items-center justify-between gap-2 mt-auto pt-1.5">
-                    <Pill className="truncate">{model.category}</Pill>
+                    <Pill className="truncate">{categoryLabel(model.category)}</Pill>
                     <LikeButton modelId={model.id} initialLikes={model.likes} initialLiked={model.likedByMe}
                         className="relative z-10 p-1.5 -mr-1.5 text-[13px] font-semibold text-muted" iconClassName="w-[17px] h-[17px]" />
                 </div>

@@ -29,7 +29,7 @@ export default function Navbar(){
                     <span className="inline-flex items-center gap-1.5"><FaRegCircleUser aria-hidden="true" className="w-3.5 h-3.5" />My account</span>
                   </NavLink>
                   <li className="text-[12.5px] font-medium tracking-[0.06em] uppercase">
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="py-1.5 border-b-2 border-transparent cursor-pointer text-muted transition-colors hover:text-ink">
+                    <button onClick={() => signOut({ callbackUrl: "/" })} className="py-1.5 text-[12.5px] font-medium tracking-[0.06em] uppercase border-b-2 border-transparent cursor-pointer text-muted transition-colors hover:text-ink">
                       Logout
                     </button>
                   </li>
