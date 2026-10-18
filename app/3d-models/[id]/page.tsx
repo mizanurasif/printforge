@@ -5,6 +5,7 @@ import { FaDownload, FaPen } from "react-icons/fa6"
 import DeleteModelButton from "@/app/components/dashboard/DeleteModelButton"
 import LikeButton from "@/app/components/Model/LikeButton"
 import ModelPreview from "@/app/components/Model/ModelPreview"
+import { categoryLabel } from "@/app/components/categoryLabel"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/lib/auth"
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
@@ -20,7 +21,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
         <section className="flex flex-col justify-center h-full">
           <span className="mb-4 inline-block border border-line bg-white rounded-full px-3 py-1 text-sm text-muted w-fit"
             role="status" aria-label="Category">
-            {model.category}
+            {categoryLabel(model.category)}
           </span>
           <h1 className="mb-3 text-4xl font-bold tracking-tight">{model.name}</h1>
 

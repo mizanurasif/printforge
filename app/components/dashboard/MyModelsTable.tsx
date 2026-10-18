@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { FaEye, FaHeart, FaPen } from 'react-icons/fa6'
 import { Model } from '@/app/lib/models'
 import DeleteModelButton from './DeleteModelButton'
+import { categoryLabel } from '../categoryLabel'
 
 function formatDate(date: Date) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -11,7 +12,7 @@ function formatDate(date: Date) {
 function CategoryBadge({ slug }: { slug: string }) {
     return (
         <span className="inline-block px-2.5 py-0.5 text-xs text-ink border border-line rounded-full whitespace-nowrap">
-            {slug.replace(/-/g, ' ')}
+            {categoryLabel(slug)}
         </span>
     )
 }
