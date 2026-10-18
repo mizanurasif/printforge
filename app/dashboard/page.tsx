@@ -43,7 +43,7 @@ export default async function DashboardPage({ searchParams }: {
                     <FaCircleCheck className="mt-0.5 shrink-0" aria-hidden="true" />
                     <p>
                         <span className="font-semibold">&ldquo;{uploaded}&rdquo; was uploaded.</span>{' '}
-                        This is a demo: nothing is saved yet, so it won&apos;t appear in the list below.
+                        You&apos;ll find it in your models below.
                     </p>
                 </div>
             )}

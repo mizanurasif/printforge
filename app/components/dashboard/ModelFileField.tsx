@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 import { FaCube, FaXmark } from 'react-icons/fa6'
 
-const MAX_MODEL_MB = 50   // matches MAX_MODEL_BYTES in app/lib/modelFileUtils.ts, which is the real check
+const MAX_MODEL_MB = 80   // matches MAX_MODEL_BYTES in app/lib/modelFileUtils.ts, which is the real check
 
 // The live 3D preview in the upload and edit forms (WebGL only exists in the browser, see ModelPreview)
 export const ModelFileViewer = dynamic(() => import('@/app/components/Model/ModelViewer'), {
