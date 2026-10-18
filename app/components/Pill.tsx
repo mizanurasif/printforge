@@ -3,7 +3,7 @@ import { PillProps } from "@/app/lib/models";
 export default function Pill({ children, className = "" }: PillProps) {
     return (
         <span
-            className={`inline-block bg-transparent border border-gray-400 rounded-full px-3 py-1 text-sm text-gray-800 ${className}`}
+            className={`inline-block border border-line rounded-full px-2.5 py-0.5 text-xs text-muted ${className}`}
         >
             {children}
         </span>

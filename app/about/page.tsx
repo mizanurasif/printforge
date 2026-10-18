@@ -1,34 +1,62 @@
 import Image from 'next/image'
-import heroImageSquare from '@/public/hero-image-square.png'
+import Link from 'next/link'
+import { FaCubes, FaUsers, FaGift } from 'react-icons/fa6'
+
+// Renders of real models from the library, cut out on transparent backgrounds
+const mosaic = [
+    { src: '/img/about/cottage.webp', alt: 'Medieval timber cottage' },
+    { src: '/img/about/elephant.webp', alt: 'Carved wooden elephant' },
+    { src: '/img/about/guardian.webp', alt: 'Stone guardian statue' },
+    { src: '/img/about/cat.webp', alt: 'Concrete cat statue' },
+    { src: '/img/about/bust.webp', alt: 'Marble bust' },
+    { src: '/img/about/door.webp', alt: 'Medieval wooden door' },
+]
+// Tiles 2 and 4 sit on sky blue, tile 6 on blush; the rest on frosted white
+const tileBg = [
+    'bg-white/70',
+    'bg-[radial-gradient(70%_60%_at_50%_40%,rgb(189_230_250/0.95),rgb(189_230_250/0)_70%),linear-gradient(180deg,#DDE3FA,#ECE4F4)]',
+    'bg-white/70',
+    'bg-[radial-gradient(70%_60%_at_50%_40%,rgb(189_230_250/0.95),rgb(189_230_250/0)_70%),linear-gradient(180deg,#DDE3FA,#ECE4F4)]',
+    'bg-white/70',
+    'bg-[radial-gradient(70%_60%_at_50%_40%,rgb(244_198_216/0.8),rgb(244_198_216/0)_70%),#F7EEF4]',
+]
+
+const facts = [
+    { icon: FaCubes, title: '100K+ models', text: 'Access our vast library of community-created 3D models, from practical tools to artistic creations.' },
+    { icon: FaUsers, title: 'Active community', text: 'Join thousands of makers who share tips, provide feedback, and collaborate on projects.' },
+    { icon: FaGift, title: 'Free to use', text: 'Most models are free to download, with optional premium features for power users.' },
+]
+
 export default function AboutPage() {
     return (
         <main>
-            <section className="container max-w-4xl px-4 py-8 mx-auto">
-                <h1 className="mb-6 text-4xl font-bold text-center">
-                    About PrintForge
-                </h1>
+            <section className="relative overflow-hidden pastel-wash">
+                <div aria-hidden="true" className="grid-floor" />
+                <span aria-hidden="true" className="axis axis-x" />
+                <span aria-hidden="true" className="axis axis-z" />
 
-                <div className="grid items-center gap-8 mb-12 md:grid-cols-2">
-                    <div className="relative h-[300px] w-full">
-                        <Image
-                            src={heroImageSquare}
-                            alt="PrintForge Community - A group of makers collaborating on 3D printing projects"
-                        />
+                <div className="relative grid items-center gap-10 px-6 py-12 mx-auto md:py-16 max-w-7xl md:grid-cols-2">
+                    <div className="grid grid-cols-3 gap-3" aria-label="Models from the PrintForge library" role="group">
+                        {mosaic.map((tile, i) => (
+                            <span key={tile.src}
+                                className={`grid place-items-center overflow-hidden rounded-2xl shadow-[0_16px_36px_-26px_rgb(70_60_140/0.55)] ${tileBg[i]} ${i === 0 ? 'col-span-2 row-span-2' : 'aspect-square'}`}>
+                                <Image src={tile.src} alt={tile.alt} width={360} height={360}
+                                    className={`object-contain w-auto h-auto max-h-[78%] drop-shadow-[0_8px_10px_rgb(70_60_140/0.25)] ${i === 0 ? 'max-w-[70%]' : 'max-w-[76%]'}`} />
+                            </span>
+                        ))}
                     </div>
-                    <div>
-                        <p className="mb-4 text-sm text-gray-600 uppercase" aria-hidden="true">
-                            About PrintForge
-                        </p>
-                        <h2 className="mb-4 text-2xl font-semibold">
-                            Empowering Makers Worldwide
-                        </h2>
-                        <p className="mb-4 text-gray-700">
+                    <div className="space-y-4">
+                        <p className="eyebrow">About PrintForge</p>
+                        <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+                            Empowering makers <span className="text-indigo">worldwide</span>
+                        </h1>
+                        <p className="text-muted">
                             Founded in 2023, PrintForge has quickly become the
                             go-to platform for 3D printing enthusiasts, makers,
                             and professional designers to share and discover
                             amazing STL files for 3D printing.
                         </p>
-                        <p className="text-gray-700">
+                        <p className="text-muted">
                             Our mission is to foster a vibrant community where
                             creativity meets technology, enabling anyone to
                             bring their ideas to life through 3D printing.
@@ -37,64 +65,34 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            <hr className="border-gray-200" aria-hidden="true" />
-
-            <section className="py-12" aria-labelledby="key-features">
-                <div className="px-6 mx-auto max-w-7xl">
-                    <h2 id="key-features" className="sr-only">Key Features</h2>
-                    <div className="grid gap-6 md:gap-0 md:grid-cols-3">
-                        <article className="p-6 bg-white">
-                            <h3 className="mb-3 text-xl font-semibold">
-                                100K+ Models
-                            </h3>
-                            <p className="text-gray-600">
-                                Access our vast library of community-created 3D
-                                models, from practical tools to artistic
-                                creations.
-                            </p>
+            <section className="px-6 py-12" aria-label="PrintForge at a glance">
+                <div className="grid gap-5 mx-auto max-w-7xl md:grid-cols-3">
+                    {facts.map(({ icon: Icon, title, text }) => (
+                        <article key={title} className="p-6 card">
+                            <span className="grid w-11 h-11 mb-4 place-items-center rounded-xl bg-lavender text-indigo">
+                                <Icon aria-hidden="true" className="w-5 h-5" />
+                            </span>
+                            <h2 className="mb-2 text-xl font-semibold">{title}</h2>
+                            <p className="text-muted">{text}</p>
                         </article>
-                        <article className="p-6 bg-white border-gray-400 md:border-x">
-                            <h3 className="mb-3 text-xl font-semibold">
-                                Active Community
-                            </h3>
-                            <p className="text-gray-600">
-                                Join thousands of makers who share tips, provide
-                                feedback, and collaborate on projects.
-                            </p>
-                        </article>
-                        <article className="p-6 bg-white">
-                            <h3 className="mb-3 text-xl font-semibold">
-                                Free to Use
-                            </h3>
-                            <p className="text-gray-600">
-                                Most models are free to download, with optional
-                                premium features for power users.
-                            </p>
-                        </article>
-                    </div>
+                    ))}
                 </div>
             </section>
 
-            <hr className="border-gray-200" aria-hidden="true" />
-
-            <section className="container max-w-3xl px-4 py-8 mx-auto">
-                <div className="prose max-w-none">
-                    <h2 className="mb-4 text-2xl font-semibold">Our Vision</h2>
-                    <p className="mb-4 text-gray-700">
-                        At PrintForge, we believe that 3D printing is
-                        revolutionizing the way we create, prototype, and
-                        manufacture. Our platform serves as a bridge between
-                        designers and makers, enabling the sharing of knowledge
-                        and creativity that pushes the boundaries of what's
-                        possible with 3D printing.
-                    </p>
-                    <p className="text-gray-700">
-                        Whether you're a hobbyist looking for your next weekend
-                        project, an educator seeking teaching materials, or a
-                        professional designer wanting to share your creations,
-                        PrintForge provides the tools and community to support
-                        your journey in 3D printing.
-                    </p>
+            <section className="px-6 pb-16">
+                <div className="flex flex-col gap-6 p-8 mx-auto max-w-7xl rounded-3xl pastel-wash md:flex-row md:items-center md:justify-between md:p-10">
+                    <div className="max-w-2xl space-y-3">
+                        <p className="eyebrow">Our vision</p>
+                        <h2 className="text-3xl font-bold tracking-tight">Every idea, one print away</h2>
+                        <p className="text-muted">
+                            We want a world where anyone can find, tweak and print the object they have in mind,
+                            and where the makers who design those objects get the credit and community they deserve.
+                        </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3 shrink-0">
+                        <Link href="/3d-models" className="btn-primary">Browse models</Link>
+                        <Link href="/register" className="btn-ghost">Create account</Link>
+                    </div>
                 </div>
             </section>
         </main>

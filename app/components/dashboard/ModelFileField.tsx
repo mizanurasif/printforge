@@ -9,7 +9,7 @@ const MAX_MODEL_MB = 50   // matches MAX_MODEL_BYTES in app/lib/modelFileUtils.t
 // The live 3D preview in the upload and edit forms (WebGL only exists in the browser, see ModelPreview)
 export const ModelFileViewer = dynamic(() => import('@/app/components/Model/ModelViewer'), {
     ssr: false,
-    loading: () => <p className="flex items-center justify-center w-full h-full text-sm text-gray-500">Loading 3D viewer...</p>,
+    loading: () => <p className="flex items-center justify-center w-full h-full text-sm text-muted">Loading 3D viewer...</p>,
 })
 
 // Sends the .glb to its own route after the form is saved. XMLHttpRequest rather than fetch,
@@ -46,8 +46,8 @@ function checkModelFile(file: File): string | null {
     return null
 }
 
-const rowClass = 'flex items-center gap-4 p-3 border border-gray-200 rounded-md'
-const iconButtonClass = 'flex items-center justify-center w-8 h-8 text-gray-500 rounded-md cursor-pointer hover:bg-gray-100 hover:text-red-600'
+const rowClass = 'flex items-center gap-4 p-3 border border-line rounded-xl'
+const iconButtonClass = 'flex items-center justify-center w-8 h-8 text-muted rounded-xl cursor-pointer hover:bg-mist hover:text-red-600'
 
 // file: the newly picked .glb. hasCurrent: on the edit page, the model already has one (it can be replaced, not removed).
 // serverError: e.g. "Choose a 3D model" from the Server Action
@@ -75,10 +75,10 @@ export default function ModelFileField({ file, onChange, hasCurrent = false, ser
             <span className="block mb-1 text-sm font-medium">3D model</span>
             {file ? (
                 <div className={rowClass}>
-                    <FaCube className="w-8 h-8 text-orange-accent shrink-0" aria-hidden="true" />
+                    <FaCube className="w-8 h-8 text-indigo shrink-0" aria-hidden="true" />
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{file.name}</p>
-                        <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        <p className="text-xs text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                     <button type="button" onClick={() => onChange(null)} aria-label={hasCurrent ? 'Keep current 3D model' : 'Remove 3D model'}
                         title={hasCurrent ? 'Keep current 3D model' : undefined} className={iconButtonClass}>
@@ -87,21 +87,21 @@ export default function ModelFileField({ file, onChange, hasCurrent = false, ser
                 </div>
             ) : hasCurrent ? (
                 <div className={rowClass}>
-                    <FaCube className="w-8 h-8 text-orange-accent shrink-0" aria-hidden="true" />
+                    <FaCube className="w-8 h-8 text-indigo shrink-0" aria-hidden="true" />
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">Current 3D model</p>
-                        <p className="text-xs text-gray-500">.glb, up to {MAX_MODEL_MB}MB</p>
+                        <p className="text-xs text-muted">.glb, up to {MAX_MODEL_MB}MB</p>
                     </div>
-                    <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:border-orange-accent hover:bg-orange-50/40">
+                    <label className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-ink border border-line rounded-xl cursor-pointer hover:border-indigo hover:bg-lavender/30">
                         Replace
                         {fileInput}
                     </label>
                 </div>
             ) : (
-                <label className="flex flex-col items-center justify-center gap-2 px-4 py-8 text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-orange-accent hover:bg-orange-50/40">
-                    <FaCube className="text-3xl text-gray-400" aria-hidden="true" />
-                    <span className="text-sm font-medium text-gray-700">Click to choose a 3D model</span>
-                    <span className="text-xs text-gray-500">.glb, up to {MAX_MODEL_MB}MB. Shown in 3D on your model&apos;s page.</span>
+                <label className="flex flex-col items-center justify-center gap-2 px-4 py-8 text-center border-2 border-line border-dashed rounded-xl cursor-pointer hover:border-indigo hover:bg-lavender/30">
+                    <FaCube className="text-3xl text-muted/70" aria-hidden="true" />
+                    <span className="text-sm font-medium text-ink">Click to choose a 3D model</span>
+                    <span className="text-xs text-muted">.glb, up to {MAX_MODEL_MB}MB. Shown in 3D on your model&apos;s page.</span>
                     {fileInput}
                 </label>
             )}

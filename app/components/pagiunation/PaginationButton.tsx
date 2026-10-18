@@ -26,7 +26,8 @@ export default function PaginationButton({page,label,startTransition,isActive,is
         })
     }
   return (
-    <button disabled = {isDisable} onClick= {handlePage} className={`px-3 py-1.5 text-sm rounded-md border cursor-pointer ${isActive ? "text-white bg-orange-400 border-orange-400" : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}>  
+    <button disabled = {isDisable} onClick= {handlePage} aria-current={isActive ? 'page' : undefined}
+      className={`min-w-10 h-10 px-3 text-sm font-medium rounded-full border cursor-pointer transition-colors disabled:cursor-default ${isActive ? "text-white bg-ink border-ink" : 'bg-white border-line text-muted hover:text-ink hover:border-ink'}`}>  
       { label  || page}  
     </button>
   )

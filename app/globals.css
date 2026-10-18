@@ -1,11 +1,96 @@
 @import "tailwindcss";
 
+/* Pastel palette: sky → lavender → blush backgrounds, dark ink for text and main buttons */
 @theme {
-  --color-orange-accent: #F77D36;
+  --color-page: #F1F5FD;
+  --color-mist: #EEF1F8;
+  --color-sky: #BDE6FA;
+  --color-lavender: #D9D3EE;
+  --color-blush: #F4C6D8;
+  --color-ink: #17152B;
+  --color-muted: #4A4E69;
+  --color-line: rgb(23 21 43 / 0.1);
+  --color-indigo: #3A3FA8;
+  --color-pink: #E0507E;
+  --color-pink-ink: #C8386A;
+  --color-cyan: #2FB6E0;
   /* Behind model pictures and the 3D viewer: light sky blue, so white models stand out */
   --color-model-bg: #bae6fd;
+
+  --font-display: var(--font-montserrat-alternates), "Avenir Next", system-ui, sans-serif;
 }
 
-h1,h2,h3,h4,h5,h6 {
-  font-family: var(--font-montserrat-alternates);
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-indigo);
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* Main action: dark ink pill */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-semibold text-white rounded-full cursor-pointer bg-ink
+      shadow-[0_12px_26px_-14px_rgb(23_21_43/0.7)] transition hover:-translate-y-px hover:bg-indigo
+      disabled:opacity-60 disabled:cursor-wait disabled:hover:translate-y-0;
+  }
+  /* Secondary action: white pill */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 font-semibold rounded-full cursor-pointer bg-white text-ink
+      border border-transparent shadow-[0_10px_24px_-18px_rgb(23_21_43/0.5)] transition hover:border-ink
+      disabled:opacity-60;
+  }
+  .input {
+    @apply w-full px-3.5 py-2.5 bg-white border rounded-xl border-line text-ink placeholder:text-muted/60
+      focus:outline-2 focus:outline-indigo focus:outline-offset-0 focus:border-transparent;
+  }
+  .card {
+    @apply bg-white border border-line rounded-2xl shadow-[0_14px_30px_-24px_rgb(23_21_43/0.45)];
+  }
+  .eyebrow {
+    @apply flex items-center gap-2.5 text-xs font-semibold tracking-[0.12em] uppercase text-pink-ink
+      before:content-[''] before:w-[22px] before:h-0.5 before:bg-cyan;
+  }
+
+  /* Soft pastel wash used behind the landing hero and page headers */
+  .pastel-wash {
+    background:
+      radial-gradient(45% 55% at 74% 46%, rgb(217 211 238 / 0.95), rgb(217 211 238 / 0) 70%),
+      radial-gradient(55% 65% at 8% 0%, rgb(189 230 250 / 0.95), rgb(189 230 250 / 0) 70%),
+      radial-gradient(45% 60% at 0% 100%, rgb(244 198 216 / 0.9), rgb(244 198 216 / 0) 70%),
+      linear-gradient(160deg, #DCEFFB 0%, #EEF1F8 55%, #F3EEF6 100%);
+  }
+  /* The 3D-viewport floor: a grid in perspective, fading out towards the back */
+  .grid-floor {
+    @apply absolute pointer-events-none -left-1/2 -right-1/2 -bottom-[10%] h-[62%];
+    background-image:
+      linear-gradient(rgb(74 78 105 / 0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(74 78 105 / 0.14) 1px, transparent 1px);
+    background-size: 64px 64px;
+    transform: perspective(700px) rotateX(64deg);
+    transform-origin: 50% 100%;
+    mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  }
+  /* The viewport's X (pink) and Z (cyan) axis lines */
+  .axis {
+    @apply absolute pointer-events-none h-[1.5px] w-[90%] left-[40%] opacity-50;
+  }
+  .axis-x {
+    top: 86%;
+    transform: rotate(-16deg);
+    background: linear-gradient(90deg, transparent, var(--color-pink) 30%, var(--color-pink) 70%, transparent);
+  }
+  .axis-z {
+    top: 58%;
+    transform: rotate(24deg);
+    background: linear-gradient(90deg, transparent, var(--color-cyan) 30%, var(--color-cyan) 70%, transparent);
+  }
 }

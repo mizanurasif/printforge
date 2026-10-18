@@ -33,23 +33,57 @@ function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => vo
     square.toBlob((blob) => { if (blob) onSnapshot(blob) }, 'image/png')
 }
 
+// Replaces the colour map of every material whose name contains a key of `textures`.
+// glTF textures aren't flipped (flipY = false), so replacement images must be stored the same way up as the file's own.
+// The file's glow (emissive) map is kept but tinted soft pink, so its original colours don't show through the new ones.
+function retexture(model: THREE.Object3D, textures: Record<string, string>) {
+    const entries = Object.entries(textures)
+    if (!entries.length) return
+    const loader = new THREE.TextureLoader()
+    const cache = new Map<string, THREE.Texture>()
+    model.traverse((obj) => {
+        if (!(obj instanceof THREE.Mesh)) return
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
+        for (const material of materials) {
+            const match = entries.find(([key]) => material.name.includes(key))
+            if (!match || !(material instanceof THREE.MeshStandardMaterial)) continue
+            let texture = cache.get(match[1])
+            if (!texture) {
+                texture = loader.load(match[1])
+                texture.flipY = false
+                texture.colorSpace = THREE.SRGBColorSpace
+                cache.set(match[1], texture)
+            }
+            material.map?.dispose()
+            material.map = texture
+            material.emissive.set(0xffc2d8)
+            material.emissiveIntensity = 0.35
+            material.needsUpdate = true
+        }
+    })
+}
+
 // Only load this through ModelPreview (next/dynamic, ssr: false): WebGL doesn't exist on the server.
 // See docs/3D_VIEWER_GUIDE.md for what each numbered part does.
 // animate: play one of the file's animations, if it has any (see pickClip)
 // zoom: false stops the wheel and touch from zooming, so the page still scrolls over the model
 // onSnapshot: called once with a PNG of the first frame, e.g. to use as an uploaded model's picture
-export default function ModelViewer({ src, name, animate = true, zoom = true, onSnapshot }: {
+// textures: swaps a material's colour map, keyed by part of the material name, e.g. { '01a': '/img/a.png' }
+export default function ModelViewer({ src, name, animate = true, zoom = true, onSnapshot, textures }: {
     src: string
     name: string
     animate?: boolean
     zoom?: boolean
     onSnapshot?: (image: Blob) => void
+    textures?: Record<string, string>
 }) {
     const mountRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
     // A ref, so a new callback from the parent doesn't restart the effect (and reload the model)
     const onSnapshotRef = useRef(onSnapshot)
     useEffect(() => { onSnapshotRef.current = onSnapshot })
+    // Compared as a string, so a new object with the same entries doesn't reload the model
+    const texturesKey = JSON.stringify(textures ?? {})
 
     useEffect(() => {
         const mount = mountRef.current
@@ -84,6 +118,7 @@ export default function ModelViewer({ src, name, animate = true, zoom = true, on
         new GLTFLoader().load(src, (gltf) => {
             if (disposed) return
             const model = gltf.scene
+            retexture(model, JSON.parse(texturesKey))
             // If it has an animation, pickClip chooses one and an AnimationMixer plays it
             const clip = animate ? pickClip(gltf.animations) : undefined
             if (clip) {
@@ -154,15 +189,14 @@ export default function ModelViewer({ src, name, animate = true, zoom = true, on
             renderer.dispose()
             mount.removeChild(renderer.domElement)
         }
-    }, [src, animate, zoom])
+    }, [src, animate, zoom, texturesKey])
 
     return (
         <div ref={mountRef} className={`relative w-full h-full ${zoom ? 'touch-none' : 'touch-pan-y'}`} role="img" aria-label={`3D view of ${name}`}>
             {status === 'loading' && (
                 // No picture while loading: the saved pictures have their own background, which wouldn't match the viewer's
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-gray-500">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- a small static svg */}
-                    <img src="/img/spinner.svg" alt="" className="w-12 h-12" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-muted">
+                    <span aria-hidden="true" className="w-10 h-10 border-4 rounded-full border-lavender border-t-pink animate-spin motion-reduce:animate-none" />
                     Loading 3D model...
                 </div>
             )}

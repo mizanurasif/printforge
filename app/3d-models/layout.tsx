@@ -7,11 +7,11 @@ export default async function ModelLayout({ children }: {children: ReactNode}) {
     const categories = await getAllCategories();
     return (
         <>
-            <div className="relative flex flex-col min-h-screen md:flex-row">
+            <div className="flex flex-col gap-6 px-4 py-6 mx-auto md:flex-row md:px-6 md:py-10 max-w-7xl">
             {/* Responsive Navigation */}
             <CategoriesNav categories={categories} />
             {/* Main Content Area */}
-            <main className="flex-1 p-4 md:ml-64">{children}</main>
+            <main className="flex-1 min-w-0">{children}</main>
             </div>
         </>
     )

@@ -1,17 +1,11 @@
-import Image from 'next/image'
 import { ReactNode } from 'react'
 export default function LoadingUI({children}: { children:ReactNode}) {  
   return (
     <>
-    <main>  
-      <h1 className="font-bold text-2xl text-orange-400 text-center mb-4">{children}</h1>  
-      <Image
-        src="/img/spinner.svg"  
-        alt="Loading..."  
-        width={100}  
-        height={100}  
-        className="w-20 h-20 mx-auto"  
-      />  
+    <main role="status" className="flex flex-col items-center gap-4 py-16">  
+      {/* A pastel ring spinner, drawn in CSS so it matches the theme */}
+      <span aria-hidden="true" className="w-12 h-12 border-4 rounded-full border-lavender border-t-pink animate-spin motion-reduce:animate-none" />
+      <p className="font-semibold text-muted">{children}</p>  
     </main>
     </>
   )  

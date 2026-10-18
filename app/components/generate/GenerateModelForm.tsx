@@ -33,9 +33,9 @@ function saveModel(formData: FormData, onProgress: (percent: number) => void): P
     })
 }
 
-const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent'
-const primaryButton = 'inline-flex items-center justify-center gap-2 px-5 py-2 font-semibold text-white rounded-md cursor-pointer bg-orange-400 hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed'
-const secondaryButton = 'px-4 py-2 font-semibold text-center text-gray-700 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 disabled:opacity-60'
+const inputClass = 'input'
+const primaryButton = 'btn-primary disabled:cursor-not-allowed'
+const secondaryButton = 'btn-ghost border-line'
 
 function FieldError({ messages }: { messages?: string[] }) {
     if (!messages?.length) return null
@@ -147,28 +147,28 @@ export default function GenerateModelForm({ categories }: { categories: Category
 
     return (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px]">
-            <div className="flex flex-col gap-5 p-6 bg-white border border-gray-200 rounded-lg shadow-sm h-fit">
+            <div className="flex flex-col gap-5 p-6 bg-white border border-line rounded-2xl shadow-sm h-fit">
                 {/* Step 1: the picture */}
                 <div>
                     <span className="block mb-1 text-sm font-medium">Picture</span>
                     {image ? (
-                        <div className="flex items-center gap-4 p-3 border border-gray-200 rounded-md">
+                        <div className="flex items-center gap-4 p-3 border border-line rounded-xl">
                             {/* eslint-disable-next-line @next/next/no-img-element -- blob: preview URLs can't go through next/image */}
-                            <img src={image.previewUrl} alt="Selected picture" className="object-cover w-20 h-20 rounded-md" />
+                            <img src={image.previewUrl} alt="Selected picture" className="object-cover w-20 h-20 rounded-xl" />
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">{image.file.name}</p>
-                                <p className="text-xs text-gray-500">{(image.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                <p className="text-xs text-muted">{(image.file.size / 1024 / 1024).toFixed(2)} MB</p>
                             </div>
                             <button type="button" onClick={startOver} disabled={generating || saving} aria-label="Remove picture"
-                                className="flex items-center justify-center w-8 h-8 text-gray-500 rounded-md cursor-pointer hover:bg-gray-100 hover:text-red-600 disabled:opacity-40">
+                                className="flex items-center justify-center w-8 h-8 text-muted rounded-xl cursor-pointer hover:bg-mist hover:text-red-600 disabled:opacity-40">
                                 <FaXmark />
                             </button>
                         </div>
                     ) : (
-                        <label className="flex flex-col items-center justify-center gap-2 px-4 py-10 text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-orange-accent hover:bg-orange-50/40">
-                            <FaCloudArrowUp className="text-3xl text-gray-400" aria-hidden="true" />
-                            <span className="text-sm font-medium text-gray-700">Click to choose a picture</span>
-                            <span className="text-xs text-gray-500">PNG, JPG or WebP, up to {MAX_IMAGE_MB}MB. Works best with one object on a plain background.</span>
+                        <label className="flex flex-col items-center justify-center gap-2 px-4 py-10 text-center border-2 border-line border-dashed rounded-xl cursor-pointer hover:border-indigo hover:bg-lavender/30">
+                            <FaCloudArrowUp className="text-3xl text-muted/70" aria-hidden="true" />
+                            <span className="text-sm font-medium text-ink">Click to choose a picture</span>
+                            <span className="text-xs text-muted">PNG, JPG or WebP, up to {MAX_IMAGE_MB}MB. Works best with one object on a plain background.</span>
                             <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={handleImage} />
                         </label>
                     )}
@@ -189,7 +189,7 @@ export default function GenerateModelForm({ categories }: { categories: Category
                 {/* Step 4: keep it? */}
                 {glb && !showSaveForm && (
                     <div className="flex flex-col gap-3">
-                        <p className="text-sm text-gray-700">Your 3D model is ready. Drag the preview to look around it.</p>
+                        <p className="text-sm text-ink">Your 3D model is ready. Drag the preview to look around it.</p>
                         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button type="button" onClick={generate} className={secondaryButton}>Generate again</button>
                             <button type="button" onClick={() => setShowSaveForm(true)} className={primaryButton}>Save model</button>
@@ -198,11 +198,11 @@ export default function GenerateModelForm({ categories }: { categories: Category
                 )}
 
                 {glb && showSaveForm && (
-                    <form onSubmit={handleSave} noValidate className="flex flex-col gap-5 pt-5 border-t border-gray-200">
+                    <form onSubmit={handleSave} noValidate className="flex flex-col gap-5 pt-5 border-t border-line">
                         <label className="block">
                             <span className="flex justify-between mb-1 text-sm font-medium">
                                 Name
-                                <span className="font-normal text-gray-400">{name.length}/{NAME_MAX}</span>
+                                <span className="font-normal text-muted/70">{name.length}/{NAME_MAX}</span>
                             </span>
                             <input name="name" type="text" value={name} maxLength={NAME_MAX} placeholder="E.g. Ceramic Teapot" autoFocus
                                 onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -212,7 +212,7 @@ export default function GenerateModelForm({ categories }: { categories: Category
                         <label className="block">
                             <span className="flex justify-between mb-1 text-sm font-medium">
                                 Description
-                                <span className="font-normal text-gray-400">{description.length}/{DESCRIPTION_MAX}</span>
+                                <span className="font-normal text-muted/70">{description.length}/{DESCRIPTION_MAX}</span>
                             </span>
                             <textarea name="description" rows={4} value={description} maxLength={DESCRIPTION_MAX}
                                 placeholder="What is it, and any tips for printing it?"
@@ -248,8 +248,8 @@ export default function GenerateModelForm({ categories }: { categories: Category
 
             {/* Step 3: loading, then the 3D preview */}
             <aside className="lg:sticky lg:top-6 h-fit">
-                <p className="mb-2 text-sm font-medium text-gray-500">Preview</p>
-                <div className="relative w-full overflow-hidden bg-model-bg rounded-lg shadow-md aspect-square">
+                <p className="mb-2 text-sm font-medium text-muted">Preview</p>
+                <div className="relative w-full overflow-hidden bg-model-bg rounded-2xl shadow-md aspect-square">
                     {glb ? (
                         <ModelFileViewer src={glb.url} name={name || 'your generated model'} onSnapshot={setSnapshot} />
                     ) : (
@@ -260,12 +260,12 @@ export default function GenerateModelForm({ categories }: { categories: Category
                             )}
                             {generating ? (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center" role="status">
-                                    <div className="w-12 h-12 border-4 border-orange-200 rounded-full border-t-orange-500 animate-spin" aria-hidden="true" />
-                                    <p className="font-semibold text-gray-800">Building your 3D model... {seconds}s</p>
-                                    <p className="text-sm text-gray-600">This usually takes 15 to 60 seconds, longer when the free GPU is busy. Keep this page open.</p>
+                                    <div className="w-12 h-12 border-4 border-lavender rounded-full border-t-pink animate-spin" aria-hidden="true" />
+                                    <p className="font-semibold text-ink">Building your 3D model... {seconds}s</p>
+                                    <p className="text-sm text-muted">This usually takes 15 to 60 seconds, longer when the free GPU is busy. Keep this page open.</p>
                                 </div>
                             ) : !image && (
-                                <p className="absolute inset-0 flex items-center justify-center px-6 text-sm text-center text-gray-500">
+                                <p className="absolute inset-0 flex items-center justify-center px-6 text-sm text-center text-muted">
                                     Your 3D model will appear here.
                                 </p>
                             )}
