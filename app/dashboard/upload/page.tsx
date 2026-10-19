@@ -1,3 +1,4 @@
+import { blobEnabled } from '@/app/lib/blobStorage'
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -20,7 +21,7 @@ export default async function UploadModelPage() {
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Upload a model</h1>
             <p className="mb-8 text-muted">Share a printable design with the PrintForge community.</p>
 
-            <UploadModelForm categories={categories} />
+            <UploadModelForm categories={categories} directUpload={blobEnabled()} />
         </main>
     )
 }

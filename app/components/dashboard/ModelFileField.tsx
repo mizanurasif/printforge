@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 import { FaCube, FaXmark } from 'react-icons/fa6'
+import { upload } from '@vercel/blob/client'
 
 const MAX_MODEL_MB = 80   // matches MAX_MODEL_BYTES in app/lib/modelFileUtils.ts, which is the real check
 
@@ -19,7 +20,27 @@ export const ModelFileViewer = dynamic(() => import('@/app/components/Model/Mode
 handler that streams it to disk. I used XHR instead of fetch because fetch can't report upload progress, 
 and I wrapped it in a Promise so the forms can await it and show the server's error message."
 */
-export function uploadModelFile(modelId: number, file: File, onProgress: (percent: number) => void): Promise<void> {
+// direct: the server uses Vercel Blob (see app/lib/blobStorage.ts). Vercel caps requests at 4.5MB, so the file goes
+// straight from the browser to Blob storage, and only its URL is sent to the route, which checks it before keeping it.
+export async function uploadModelFile(modelId: number, file: File, onProgress: (percent: number) => void, direct = false): Promise<void> {
+    if (direct) {
+        const blob = await upload(`models/${modelId}.glb`, file, {
+            access: 'public',
+            handleUploadUrl: '/api/models/upload-token',
+            contentType: 'model/gltf-binary',
+            multipart: file.size > 8 * 1024 * 1024,   // big files go up in parallel parts, retried if one fails
+            onUploadProgress: ({ percentage }) => onProgress(Math.round(percentage)),
+        })
+        const res = await fetch(`/api/models/${modelId}/file`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: blob.url }),
+        })
+        if (res.ok) return
+        let message = 'Upload failed'
+        try { message = (await res.json()).error ?? message } catch {}
+        throw new Error(message)
+    }
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest()
         xhr.open('PUT', `/api/models/${modelId}/file`)

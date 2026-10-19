@@ -43,4 +43,7 @@ next-env.d.ts
 printforge.db
 package-lock.json
 /docs
+# Pictures uploaded while running locally. The seeded catalog pictures are committed with `git add -f`.
 public/img/uploads/
+!.env.example
+
