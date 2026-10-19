@@ -7,6 +7,7 @@ import { FaCloudArrowUp, FaHeart, FaXmark } from 'react-icons/fa6'
 import { deleteModelAction, uploadModel, type UploadState } from '@/app/dashboard/upload/actions'
 import { Category } from '@/app/lib/models'
 import ModelFileField, { ModelFileViewer, uploadModelFile } from './ModelFileField'
+import { shrinkImage } from './shrinkImage'
 
 const initialState: UploadState = {}
 const NAME_MAX = 80
@@ -20,7 +21,7 @@ function FieldError({ messages }: { messages?: string[] }) {
     return <p className="mt-1 text-sm text-red-600">{messages[0]}</p>
 }
 
-export default function UploadModelForm({ categories }: { categories: Category[] }) {
+export default function UploadModelForm({ categories, directUpload = false }: { categories: Category[], directUpload?: boolean }) {
     const router = useRouter()
     const [progress, setProgress] = useState<number | null>(null)
 
@@ -35,7 +36,7 @@ export default function UploadModelForm({ categories }: { categories: Category[]
         if (!result.modelId || !(glb instanceof File)) return result
 
         try {
-            await uploadModelFile(result.modelId, glb, setProgress)
+            await uploadModelFile(result.modelId, glb, setProgress, directUpload)
         } catch (err: unknown) {
             setProgress(null)
             // The 3D file is required, so don't keep a model without one: remove it and let them try again
@@ -88,11 +89,11 @@ export default function UploadModelForm({ categories }: { categories: Category[]
 
     // Submit manually: a plain `action={formAction}` resets the form afterwards,
     // which would wipe the user's input (and chosen image) when validation fails
-    function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         const snapshotImage = modelFile && snapshot ? new File([snapshot], 'snapshot.png', { type: 'image/png' }) : null
-        formData.set('image', imageFile ?? snapshotImage ?? new File([], ''))
+        formData.set('image', imageFile ? await shrinkImage(imageFile) : snapshotImage ?? new File([], ''))
         if (modelFile) formData.set('modelFile', modelFile.file)
         startTransition(() => formAction(formData))
     }

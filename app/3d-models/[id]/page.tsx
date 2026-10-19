@@ -1,4 +1,5 @@
-import type { ModelDetailPageProps } from "@/app/lib/models"
+import type { Model, ModelDetailPageProps } from "@/app/lib/models"
+import { notFound } from "next/navigation"
 import { getModelById } from "@/app/lib/database/database"
 import Link from "next/link"
 import { FaDownload, FaPen } from "react-icons/fa6"
@@ -11,7 +12,15 @@ import { authOptions } from "@/app/lib/auth"
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
  
     const session = await getServerSession(authOptions)
-    const model = await getModelById((await params).id, Number(session?.user.id) || undefined)
+    const { id } = await params
+    // Deleted models and ids like "abc" don't exist: show the "not found" page instead of an error
+    if (!/^\d+$/.test(id)) notFound()
+    let model: Model
+    try {
+        model = await getModelById(id, Number(session?.user.id) || undefined)
+    } catch {
+        notFound()
+    }
     const isOwner = session && model.userId === Number(session.user.id)
     return (
     <div className="pt-2 md:pt-6">
@@ -48,9 +57,11 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
           </p>
 
           <div className="flex flex-wrap items-center gap-3 mb-6">
-            {/* The .glb is a static file in /public, so a plain link with "download" saves it under the model's name */}
+            {/* A file in /public downloads with a plain "download" link. Browsers ignore "download" for files on
+                another site (Vercel Blob), so those ask Blob for a download with ?download=1 instead */}
             {model.modelFile && (
-              <a href={model.modelFile} download={`${model.name.trim().replace(/[^\w-]+/g, '-')}.glb`}
+              <a href={model.modelFile.startsWith('https://') ? `${model.modelFile}?download=1` : model.modelFile}
+                download={`${model.name.trim().replace(/[^\w-]+/g, '-')}.glb`}
                 className="btn-primary min-h-12 px-6">
                 <FaDownload aria-hidden="true" /> Download .glb
               </a>

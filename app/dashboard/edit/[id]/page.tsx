@@ -1,3 +1,4 @@
+import { blobEnabled } from '@/app/lib/blobStorage'
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
@@ -32,7 +33,7 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Edit {model.name}</h1>
             <p className="mb-8 text-muted">Update your model&apos;s details, or replace its image or 3D model.</p>
 
-            <EditModelForm categories={categories} model={model} />
+            <EditModelForm categories={categories} model={model} directUpload={blobEnabled()} />
         </main>
     )
 }

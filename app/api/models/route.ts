@@ -5,7 +5,7 @@ import { authOptions } from '@/app/lib/auth'
 import { getAllCategories } from '@/app/lib/database/categories'
 import { createModel } from '@/app/lib/database/database'
 import { deleteImage, saveImage } from '@/app/lib/imageUtils'
-import { deleteModelFile, MAX_MODEL_BYTES, ModelFileError, saveModelFile } from '@/app/lib/modelFileUtils'
+import { checkUploadedModelFile, deleteModelFile, MAX_MODEL_BYTES, ModelFileError, saveModelFile } from '@/app/lib/modelFileUtils'
 import { checkImage, MAX_IMAGE_BYTES, modelDetailsSchema, PLACEHOLDER_IMAGE } from '@/app/lib/modelValidation'
 import type { UploadState } from '@/app/dashboard/upload/actions'
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     // The form adds a little on top of the two files
     if (Number(request.headers.get('content-length')) > MAX_MODEL_BYTES + MAX_IMAGE_BYTES + 64 * 1024) {
-        return Response.json({ error: '3D model must be 50MB or smaller' }, { status: 413 })
+        return Response.json({ error: '3D model must be 80MB or smaller' }, { status: 413 })
     }
 
     let formData: FormData
@@ -47,8 +47,10 @@ export async function POST(request: Request) {
     const imageError = checkImage(image)
     if (imageError) fieldErrors.image = [imageError]
 
+    // Either the .glb itself, or (on Vercel) the Blob URL /api/generate already saved it to
     const modelFile = formData.get('modelFile')
-    if (!(modelFile instanceof File) || modelFile.size === 0) fieldErrors.modelFile = ['The 3D model is missing']
+    const modelFileUrl = formData.get('modelFileUrl')
+    if (typeof modelFileUrl !== 'string' && (!(modelFile instanceof File) || modelFile.size === 0)) fieldErrors.modelFile = ['The 3D model is missing']
 
     if (!parsed.success || Object.keys(fieldErrors).length > 0) {
         return Response.json({ fieldErrors }, { status: 400 })
@@ -58,7 +60,9 @@ export async function POST(request: Request) {
     const savedImage = image instanceof File && image.size > 0 ? await saveImage(image) : null
     let savedFile: string
     try {
-        savedFile = await saveModelFile((modelFile as File).stream(), parsed.data.category)
+        savedFile = typeof modelFileUrl === 'string'
+            ? await checkUploadedModelFile(modelFileUrl)
+            : await saveModelFile((modelFile as File).stream(), parsed.data.category)
     } catch (err: unknown) {
         if (savedImage) await deleteImage(savedImage)
         if (err instanceof ModelFileError) return Response.json({ fieldErrors: { modelFile: [err.message] } }, { status: 400 })

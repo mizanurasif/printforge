@@ -6,6 +6,7 @@ import { FaCloudArrowUp, FaWandMagicSparkles, FaXmark } from 'react-icons/fa6'
 import type { UploadState } from '@/app/dashboard/upload/actions'
 import { Category } from '@/app/lib/models'
 import { ModelFileViewer } from '../dashboard/ModelFileField'
+import { shrinkImage } from '../dashboard/shrinkImage'
 
 const MAX_IMAGE_MB = 5
 const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -52,6 +53,8 @@ export default function GenerateModelForm({ categories }: { categories: Category
     const [seconds, setSeconds] = useState(0)
     const [generateError, setGenerateError] = useState<string | null>(null)
     const [glb, setGlb] = useState<{ file: File, url: string } | null>(null)
+    // On Vercel the server keeps the generated .glb in Blob storage and sends its URL; saving then reuses that file
+    const [savedGlbUrl, setSavedGlbUrl] = useState<string | null>(null)
     // A picture of the 3D preview, used as the saved model's image
     const [snapshot, setSnapshot] = useState<Blob | null>(null)
     const [showSaveForm, setShowSaveForm] = useState(false)
@@ -111,7 +114,17 @@ export default function GenerateModelForm({ categories }: { categories: Category
                 try { message = (await res.json()).error ?? message } catch {}
                 throw new Error(message)
             }
-            const blob = await res.blob()
+            let blob: Blob
+            if (res.headers.get('content-type')?.includes('application/json')) {
+                const { url } = await res.json()
+                const file = await fetch(url)
+                if (!file.ok) throw new Error('Could not load the generated model. Please try again.')
+                blob = await file.blob()
+                setSavedGlbUrl(url)
+            } else {
+                blob = await res.blob()
+                setSavedGlbUrl(null)
+            }
             changeGlb(new File([blob], 'generated.glb', { type: 'model/gltf-binary' }))
         } catch (err: unknown) {
             // fetch itself throws a TypeError when the request never got an answer
@@ -128,8 +141,9 @@ export default function GenerateModelForm({ categories }: { categories: Category
         const formData = new FormData(event.currentTarget)   // name, description, category
         // The picture of the 3D preview, or the original picture if the snapshot isn't ready
         const picture = snapshot ? new File([snapshot], 'snapshot.png', { type: 'image/png' }) : image?.file
-        formData.set('image', picture ?? new File([], ''))
-        formData.set('modelFile', glb.file)
+        formData.set('image', picture ? await shrinkImage(picture) : new File([], ''))
+        if (savedGlbUrl) formData.set('modelFileUrl', savedGlbUrl)
+        else formData.set('modelFile', glb.file)
 
         setSaving(true)
         setState({})
