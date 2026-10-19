@@ -30,7 +30,6 @@ const categories: SeedCategory[] = JSON.parse(
 
 // 2. Demo creators (password for all of them: password123)
 const seedUsers = [
-    { name: 'Maya Chen',   email: 'maya@printforge.dev' },
     { name: 'Leo Rahman',  email: 'leo@printforge.dev' },
     { name: 'Sara Okafor', email: 'sara@printforge.dev' },
 ]
