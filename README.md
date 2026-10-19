@@ -148,7 +148,7 @@ Generation works without it, but the GPU quota is per caller, and all users of y
 ### 4. Create the tables, seed and run
 ```bash
 npm run db:migrate   # creates the tables (runs every migration not yet applied)
-npm run db:seed      # 3 demo users, 11 categories, 47 models
+npm run db:seed      # 2 demo users, 11 categories, 47 models
 npm run dev
 ```
 
@@ -173,7 +173,6 @@ psql "<new database url>" -f data.sql
 ### Demo accounts
 | Email | Password |
 |---|---|
-| `maya@printforge.dev` | `password123` |
 | `leo@printforge.dev` | `password123` |
 | `sara@printforge.dev` | `password123` |
 
