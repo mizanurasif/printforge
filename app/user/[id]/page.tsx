@@ -19,7 +19,7 @@ function parseUserId(id: string): number | null {
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
     const userId = parseUserId((await params).id)
     const user = userId ? await getPublicUserById(userId) : undefined
-    return { title: user ? `${user.name} | PrintForge` : 'Creator not found | PrintForge' }
+    return { title: user ? user.name : 'Creator not found' }
 }
 
 export default async function UserProfilePage({ params, searchParams }: UserPageProps) {
@@ -61,8 +61,8 @@ export default async function UserProfilePage({ params, searchParams }: UserPage
             <section aria-label={`${user.name}'s stats`} className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-3">
                 <StatCard label="Models uploaded" value={modelCount} icon={<FaCube />} />
                 <StatCard label="Likes received" value={totalLikes.toLocaleString('en-US')} icon={<FaHeart />} />
-                <StatCard label="Most liked model" value={topModel ? topModel.name : '—'} icon={<FaTrophy />}
-                    hint={topModel ? `${topModel.likes.toLocaleString('en-US')} likes` : undefined} />
+                <StatCard label="Most liked model" value={topModel && topModel.likes > 0 ? topModel.name : 'No likes yet'} icon={<FaTrophy />}
+                    hint={topModel && topModel.likes > 0 ? `${topModel.likes.toLocaleString('en-US')} likes` : undefined} />
             </section>
 
             {/* Models */}

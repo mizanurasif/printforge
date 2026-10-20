@@ -13,11 +13,13 @@ export default function SortButton({children, sort,startTransition}:{
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    const isActive = searchParams.get("sort") === sort
+    // sort "" is the default order, which has no ?sort= in the address
+    const isActive = (searchParams.get("sort") ?? '') === sort
 
     function handleSort(){
     const urlSearchParams = new URLSearchParams(searchParams.toString())
-    urlSearchParams.set('sort',sort)
+    if (sort) urlSearchParams.set('sort', sort)
+    else urlSearchParams.delete('sort')
     urlSearchParams.delete('page')
     const url = `${pathname}?${urlSearchParams.toString()}`
 

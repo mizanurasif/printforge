@@ -6,6 +6,9 @@ import { FaArrowLeft } from 'react-icons/fa6'
 import UploadModelForm from '../../components/dashboard/UploadModelForm'
 import { authOptions } from '../../lib/auth'
 import { getAllCategories } from '../../lib/database/categories'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Upload a model' }
 
 export default async function UploadModelPage() {
     const session = await getServerSession(authOptions)

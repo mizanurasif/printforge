@@ -60,10 +60,15 @@ export async function uploadModelFile(modelId: number, file: File, onProgress: (
 }
 
 // Quick checks so the user hears about a wrong file right away; the server checks again
-function checkModelFile(file: File): string | null {
+async function checkModelFile(file: File): Promise<string | null> {
     if (!file.name.toLowerCase().endsWith('.glb')) return 'Choose a .glb file (binary glTF)'
     if (file.size === 0) return 'This file is empty'
     if (file.size > MAX_MODEL_MB * 1024 * 1024) return `3D model must be ${MAX_MODEL_MB}MB or smaller`
+    // A real .glb starts with "glTF", version 2, then its total length (the same check the server makes)
+    const header = new DataView(await file.slice(0, 12).arrayBuffer())
+    const magic = header.byteLength === 12 ? String.fromCharCode(...new Uint8Array(header.buffer, 0, 4)) : ''
+    if (magic !== 'glTF' || header.getUint32(4, true) !== 2) return 'This is not a valid .glb file (binary glTF 2.0)'
+    if (header.getUint32(8, true) !== file.size) return 'The .glb file is incomplete or damaged'
     return null
 }
 
@@ -80,11 +85,11 @@ export default function ModelFileField({ file, onChange, hasCurrent = false, ser
 }) {
     const [error, setError] = useState<string | null>(null)
 
-    function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+    async function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
         const picked = event.target.files?.[0] ?? null
         event.target.value = ''   // so picking the same file again still fires onChange
         if (!picked) return
-        const problem = checkModelFile(picked)
+        const problem = await checkModelFile(picked)
         setError(problem)
         if (!problem) onChange(picked)
     }

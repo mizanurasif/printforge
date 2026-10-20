@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import GenerateModelForm from '../components/generate/GenerateModelForm'
 import { authOptions } from '../lib/auth'
 import { getAllCategories } from '../lib/database/categories'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: '2D to 3D' }
 
 export default async function GeneratePage() {
     const session = await getServerSession(authOptions)
