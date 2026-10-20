@@ -34,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             return Response.json({ error: 'No file received' }, { status: 400 })
         }
         try {
-            modelFile = await checkUploadedModelFile(url)
+            modelFile = await checkUploadedModelFile(url, { modelId: model.id })
         } catch (err: unknown) {
             if (err instanceof ModelFileError) return Response.json({ error: err.message }, { status: 400 })
             console.error('Failed to check model file:', err)

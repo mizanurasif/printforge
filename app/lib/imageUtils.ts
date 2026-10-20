@@ -21,7 +21,8 @@ export async function saveImage(image: File): Promise<string> {
     await writeFile(path.join(UPLOAD_DIR, fileName), webp)
     }
     catch(err:unknown){
-         console.error("Failed:", err);
+         console.error("Failed to save image:", err);
+         throw err                                    // the caller reports it; never store a URL to a missing file
     }
     return `/img/uploads/${fileName}`                 // URL to store in the database
 }

@@ -44,7 +44,8 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
             const reason = err instanceof Error ? err.message : 'Upload failed'
             return { error: `The 3D model couldn't be uploaded (${reason}). Nothing was saved, please try again.` }
         }
-        router.push(`/3d-models/${result.modelId}`)
+        // Back to My account, which shows an "uploaded" notice above the list
+        router.push(`/dashboard?uploaded=${encodeURIComponent(String(formData.get('name') ?? '').trim())}`)
         return result
     }
     const [state, formAction, pending] = useActionState(submit, initialState)

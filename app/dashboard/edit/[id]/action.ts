@@ -60,7 +60,12 @@ export async function editModel(_prevState: UploadState, formData: FormData): Pr
         return { fieldErrors: { modelFile: ['Choose a 3D model (.glb)'] } }
     }
 
-    const newImage = image instanceof File && image.size > 0 ? await saveImage(image) : undefined
+    let newImage: string | undefined
+    try {
+        if (image instanceof File && image.size > 0) newImage = await saveImage(image)
+    } catch {
+        return { fieldErrors: { image: ['This image could not be saved. Try a different picture.'] } }
+    }
 
     // updateModel only matches this user's model, which is the ownership check
     const updatedId = await updateModel({ ...parsed.data, image: newImage, modelId, userId })

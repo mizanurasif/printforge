@@ -50,11 +50,26 @@ export async function deleteBlobFile(url: string) {
     }
 }
 
-// Reads the first bytes and the size of an uploaded .glb without downloading all of it
+// Reads the first 12 bytes and the total size of an uploaded .glb without downloading the rest.
+// Gives up after 15 seconds, and reads only the start of the body even if the server ignores the Range header.
 export async function readBlobHeader(url: string): Promise<{ header: Buffer, size: number } | null> {
-    const res = await fetch(url, { headers: { Range: 'bytes=0-11' }, cache: 'no-store' })
-    if (!res.ok) return null
-    const range = res.headers.get('content-range')   // "bytes 0-11/123456"
+    const res = await fetch(url, { headers: { Range: 'bytes=0-11' }, cache: 'no-store', signal: AbortSignal.timeout(15_000) })
+    if (res.status !== 206 && res.status !== 200) return null
+    const range = res.headers.get('content-range')   // "bytes 0-11/123456" ("…/*" when the size is unknown)
     const size = range ? Number(range.split('/')[1]) : Number(res.headers.get('content-length'))
-    return { header: Buffer.from(await res.arrayBuffer()).subarray(0, 12), size }
+    const reader = res.body?.getReader()
+    if (!Number.isFinite(size) || !reader) {
+        await reader?.cancel()
+        return null
+    }
+    const chunks: Uint8Array[] = []
+    let received = 0
+    while (received < 12) {
+        const { done, value } = await reader.read()
+        if (done) break
+        chunks.push(value)
+        received += value.length
+    }
+    await reader.cancel()
+    return { header: Buffer.concat(chunks).subarray(0, 12), size }
 }

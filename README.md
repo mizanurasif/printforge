@@ -193,6 +193,7 @@ The app runs on Vercel as it is. Three things are different from running it on y
    | `DATABASE_URL` | Neon's **pooled** connection string (host contains `-pooler`) |
    | `NEXTAUTH_SECRET` | the same secret as in your `.env` (or a new one from `npx auth secret`) |
    | `HF_TOKEN` | optional, your Hugging Face token for 2D to 3D |
+   | `CRON_SECRET` | any long random string; protects the daily job that deletes 2D to 3D results nobody saved (`vercel.json`) |
 
    Leave `NEXTAUTH_URL` out: on Vercel NextAuth finds the site's address itself. (Set it only when you add your own domain, e.g. `https://printforge.com`.)
 3. **Create a Blob store**: Project → **Storage** → **Create** → **Blob**, access **Public**, connect it to the project for all environments. This adds `BLOB_READ_WRITE_TOKEN` automatically.

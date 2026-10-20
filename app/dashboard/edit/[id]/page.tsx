@@ -17,8 +17,10 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
     let model: Model
     try {
         model = await getModelById(id)
-    } catch {
-        notFound()
+    } catch (error) {
+        // Only a missing model is "not found"; other errors (e.g. the database being down) reach app/error.tsx
+        if (error instanceof Error && /not found/i.test(error.message)) notFound()
+        throw error
     }
     // Only the owner may edit; updateModel enforces this too, this just avoids showing a useless form
     if (model.userId !== Number(session.user.id)) redirect('/dashboard')
