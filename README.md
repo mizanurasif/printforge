@@ -5,7 +5,7 @@ A full-stack marketplace for 3D-printable models. Browse a catalog of designs, s
 Built with **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL**, **NextAuth**, **three.js** and **Tailwind CSS**, with image-to-3D generation by **Hunyuan3D-2** on Hugging Face.
 
 ---
-## [🚀 Deployed Application](https://printforge-tahmina5.vercel.app) → 🚀 Deployed Application
+## Deployed Application [🚀 Deployed Application](https://printforge-tahmina5.vercel.app)
 ## Features
 
 ### Interactive 3D viewer
