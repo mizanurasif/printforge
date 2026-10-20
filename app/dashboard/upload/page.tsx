@@ -1,3 +1,4 @@
+import { blobEnabled } from '@/app/lib/blobStorage'
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -13,14 +14,14 @@ export default async function UploadModelPage() {
     const categories = await getAllCategories()
 
     return (
-        <main className="container max-w-6xl px-4 py-8 mx-auto">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-gray-600 hover:text-orange-accent">
+        <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-muted hover:text-pink-ink">
                 <FaArrowLeft aria-hidden="true" /> Back to dashboard
             </Link>
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Upload a model</h1>
-            <p className="mb-8 text-gray-500">Share a printable design with the PrintForge community.</p>
+            <p className="mb-8 text-muted">Share a printable design with the PrintForge community.</p>
 
-            <UploadModelForm categories={categories} />
+            <UploadModelForm categories={categories} directUpload={blobEnabled()} />
         </main>
     )
 }

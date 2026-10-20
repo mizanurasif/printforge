@@ -9,7 +9,7 @@ export default function PaginationControls({totalPages,currentPage,startTransiti
 
     const pagearr = Array.from({length: totalPages}, (_,i) => i+1);
     return (
-        <div className="flex justify-center gap-1">  
+        <nav aria-label="Pages" className="flex justify-center gap-1.5 mt-10">  
       {currentPage !== 1 && (
         <PaginationButton page={1} label="<<" startTransition={startTransition}/>
       )}
@@ -23,6 +23,6 @@ export default function PaginationControls({totalPages,currentPage,startTransiti
       {currentPage !== totalPages && (
         <PaginationButton page={totalPages} label=">>" startTransition={startTransition}/>
       )}
-    </div>
+    </nav>
     )
 }

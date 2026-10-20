@@ -1,6 +1,8 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/lib/auth'
 import { generateGlb, GenerationError } from '@/app/lib/hunyuan'
+import { blobEnabled } from '@/app/lib/blobStorage'
+import { putModelFile } from '@/app/lib/modelFileUtils'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -41,6 +43,9 @@ export async function POST(request: Request) {
     running.add(userId)
     try {
         const glb = await generateGlb(image)
+        // Vercel caps responses at 4.5MB, so there the .glb is put in Blob storage and only its URL is sent back.
+        // Saving the model later reuses that file (POST /api/models with modelFileUrl).
+        if (blobEnabled()) return Response.json({ url: await putModelFile(glb, userId) })
         return new Response(glb, { headers: { 'Content-Type': 'model/gltf-binary' } })
     } catch (err: unknown) {
         if (err instanceof GenerationError) return Response.json({ error: err.message }, { status: 502 })

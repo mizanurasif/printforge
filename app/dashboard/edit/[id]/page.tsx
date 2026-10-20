@@ -1,3 +1,4 @@
+import { blobEnabled } from '@/app/lib/blobStorage'
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
@@ -16,8 +17,10 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
     let model: Model
     try {
         model = await getModelById(id)
-    } catch {
-        notFound()
+    } catch (error) {
+        // Only a missing model is "not found"; other errors (e.g. the database being down) reach app/error.tsx
+        if (error instanceof Error && /not found/i.test(error.message)) notFound()
+        throw error
     }
     // Only the owner may edit; updateModel enforces this too, this just avoids showing a useless form
     if (model.userId !== Number(session.user.id)) redirect('/dashboard')
@@ -25,14 +28,14 @@ export default async function EditModelPage({ params }: { params: Promise<{ id: 
     const categories = await getAllCategories()
 
     return (
-        <main className="container max-w-6xl px-4 py-8 mx-auto">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-gray-600 hover:text-orange-accent">
+        <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 mb-4 text-sm text-muted hover:text-pink-ink">
                 <FaArrowLeft aria-hidden="true" /> Back to dashboard
             </Link>
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Edit {model.name}</h1>
-            <p className="mb-8 text-gray-500">Update your model&apos;s details, or replace its image or 3D model.</p>
+            <p className="mb-8 text-muted">Update your model&apos;s details, or replace its image or 3D model.</p>
 
-            <EditModelForm categories={categories} model={model} />
+            <EditModelForm categories={categories} model={model} directUpload={blobEnabled()} />
         </main>
     )
 }

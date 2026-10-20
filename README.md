@@ -119,7 +119,7 @@ npm install
 Either a local one (in pgAdmin create a database called `printforge`) or a free hosted one on [Neon](https://neon.tech). You only need its connection string for the next step: the tables are created by the migrations in step 4.
 
 ### 3. Environment variables
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (`.env.example` lists every variable):
 
 ```env
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/printforge
@@ -148,7 +148,7 @@ Generation works without it, but the GPU quota is per caller, and all users of y
 ### 4. Create the tables, seed and run
 ```bash
 npm run db:migrate   # creates the tables (runs every migration not yet applied)
-npm run db:seed      # 3 demo users, 11 categories, 47 models
+npm run db:seed      # 2 demo users, 11 categories, 47 models
 npm run dev
 ```
 
@@ -173,9 +173,35 @@ psql "<new database url>" -f data.sql
 ### Demo accounts
 | Email | Password |
 |---|---|
-| `maya@printforge.dev` | `password123` |
 | `leo@printforge.dev` | `password123` |
 | `sara@printforge.dev` | `password123` |
+
+## Deploy to Vercel
+
+The app runs on Vercel as it is. Three things are different from running it on your own computer, and the code already handles them:
+
+- **Uploaded files go to Vercel Blob.** Vercel's server disk is read-only, so pictures and `.glb` files can't be saved in `/public` there. When a Blob store is connected, `BLOB_READ_WRITE_TOKEN` exists and uploads go to Blob storage instead (`app/lib/blobStorage.ts`). Without it, as on your computer, they're saved in `/public` like before.
+- **Big files skip the server.** Vercel caps every request and response at 4.5MB. So a `.glb` goes straight from the browser to Blob (`/api/models/upload-token` gives permission), and the server only checks it afterwards. Generated models are saved to Blob by the server and only their URL is sent to the browser. Large pictures are scaled down in the browser before they're sent.
+- **The 565MB of seeded models stay out of the server functions.** `next.config.ts` excludes `/public` from them; Vercel serves those files directly.
+
+### Steps
+1. **Push the repo to GitHub** and on [vercel.com](https://vercel.com) choose **Add New → Project**, then import it. Deploy from GitHub, not the CLI: the CLI upload limit on the Hobby plan is 100MB and the models are bigger.
+2. **Environment variables** (Project → Settings → Environment Variables), for Production and Preview:
+
+   | Name | Value |
+   |---|---|
+   | `DATABASE_URL` | Neon's **pooled** connection string (host contains `-pooler`) |
+   | `NEXTAUTH_SECRET` | the same secret as in your `.env` (or a new one from `npx auth secret`) |
+   | `HF_TOKEN` | optional, your Hugging Face token for 2D to 3D |
+   | `CRON_SECRET` | any long random string; protects the daily job that deletes 2D to 3D results nobody saved (`vercel.json`) |
+
+   Leave `NEXTAUTH_URL` out: on Vercel NextAuth finds the site's address itself. (Set it only when you add your own domain, e.g. `https://printforge.com`.)
+3. **Create a Blob store**: Project → **Storage** → **Create** → **Blob**, access **Public**, connect it to the project for all environments. This adds `BLOB_READ_WRITE_TOKEN` automatically.
+4. **Redeploy** (Deployments → ⋯ → Redeploy) so the new variables are used.
+
+The database tables must already exist: run `npm run db:migrate` once from your computer with `DATABASE_URL` set to the **direct** Neon string. Vercel doesn't run migrations.
+
+`.env.example` lists every variable.
 
 ---
 

@@ -11,9 +11,9 @@ export default async function GeneratePage() {
     const categories = await getAllCategories()
 
     return (
-        <main className="container max-w-6xl px-4 py-8 mx-auto">
+        <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
             <h1 className="mb-1 text-2xl font-bold sm:text-3xl">2D to 3D</h1>
-            <p className="mb-8 text-gray-500">Turn a picture of an object into a 3D model, preview it, and save it to PrintForge.</p>
+            <p className="mb-8 text-muted">Turn a picture of an object into a 3D model, preview it, and save it to PrintForge.</p>
 
             <GenerateModelForm categories={categories} />
         </main>

@@ -33,26 +33,26 @@ export default function LoginForm({ callbackUrl, registered }: {
 
     return (
         <form action={handleLogin} className="flex flex-col gap-4">
-            {registered && <p className="text-sm text-green-700">Account created. Please log in.</p>}
+            {registered && <p role="status" className="px-3.5 py-2.5 text-sm text-green-800 border border-green-200 rounded-xl bg-green-50">Account created. Please log in.</p>}
             <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Email</span>
-                <input name="email" type="email" required autoComplete="email"
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent" />
+                <span className="text-sm font-semibold">Email</span>
+                <input name="email" type="email" required autoComplete="email" placeholder="you@example.com"
+                    className="input" />
             </label>
             <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Password</span>
+                <span className="text-sm font-semibold">Password</span>
                 <input name="password" type="password" required autoComplete="current-password"
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-orange-accent" />
+                    className="input" />
             </label>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
             <button type="submit" disabled={pending}
-                className="py-2 font-semibold text-white bg-orange-400 rounded-md cursor-pointer hover:bg-orange-500 disabled:opacity-60">
+                className="w-full mt-1 btn-primary min-h-12">
                 {pending ? 'Logging in...' : 'Log in'}
             </button>
-            <p className="text-sm text-center text-gray-600">
-                No account? <Link href="/register" className="text-orange-accent">Register</Link>
+            <p className="text-sm text-center text-muted">
+                No account? <Link href="/register" className="font-semibold text-pink-ink hover:underline">Register</Link>
             </p>
         </form>
     )

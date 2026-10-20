@@ -8,9 +8,17 @@ export default async function RegisterPage() {
     if (session) redirect('/dashboard')
 
     return (
-        <main className="max-w-sm px-4 mx-auto mt-16">
-            <h1 className="mb-6 text-3xl font-bold text-center">Create account</h1>
+        <main className="relative flex-1 overflow-hidden pastel-wash">
+            <div aria-hidden="true" className="grid-floor" />
+            <span aria-hidden="true" className="axis axis-x" />
+            <span aria-hidden="true" className="axis axis-z" />
+            <div className="relative max-w-md px-4 py-14 mx-auto md:py-20">
+            <div className="p-7 card md:p-9">
+            <h1 className="mb-1.5 text-3xl font-bold text-center">Create account</h1>
+            <p className="mb-7 text-center text-muted">Join the community and start sharing your models.</p>
             <RegisterForm />
+            </div>
+            </div>
         </main>
     )
 }
