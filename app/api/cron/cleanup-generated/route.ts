@@ -3,8 +3,10 @@ import sql from '@/app/lib/database/db'
 import { blobEnabled } from '@/app/lib/blobStorage'
 import { BLOB_MODELS_FOLDER } from '@/app/lib/modelFileUtils'
 
-// Runs once a day (vercel.json "crons"). 2D to 3D results are stored before the user decides to keep them
-// (models/g<userId>/…), so ones that were never saved as a model are deleted here once they're a day old.
+// Runs once a day (vercel.json "crons") and deletes Blob .glb files no model uses, once they're a day old:
+// - models/g<userId>/…  2D to 3D results the user never saved as a model
+// - models/m<modelId>/… direct uploads whose follow-up request never attached them (closed tab, network error)
+// The one-day age keeps uploads and edits that are still in progress.
 const MAX_AGE_MS = 24 * 60 * 60 * 1000
 
 export async function GET(request: Request) {
@@ -17,19 +19,21 @@ export async function GET(request: Request) {
 
     const cutoff = Date.now() - MAX_AGE_MS
     let deleted = 0
-    let cursor: string | undefined
-    do {
-        const page = await list({ prefix: `${BLOB_MODELS_FOLDER}/g`, cursor, limit: 1000 })
-        cursor = page.hasMore ? page.cursor : undefined
-        const old = page.blobs.filter((b) => new Date(b.uploadedAt).getTime() < cutoff).map((b) => b.url)
-        if (!old.length) continue
-        // Keep any file a model still uses
-        const used = await sql<{ modelFile: string }[]>`SELECT model_file FROM models WHERE model_file = ANY(${old})`
-        const usedUrls = new Set(used.map((m) => m.modelFile))
-        const unused = old.filter((url) => !usedUrls.has(url))
-        if (unused.length) await del(unused)
-        deleted += unused.length
-    } while (cursor)
+    for (const prefix of [`${BLOB_MODELS_FOLDER}/g`, `${BLOB_MODELS_FOLDER}/m`]) {
+        let cursor: string | undefined
+        do {
+            const page = await list({ prefix, cursor, limit: 1000 })
+            cursor = page.hasMore ? page.cursor : undefined
+            const old = page.blobs.filter((b) => new Date(b.uploadedAt).getTime() < cutoff).map((b) => b.url)
+            if (!old.length) continue
+            // Keep any file a model still uses
+            const used = await sql<{ modelFile: string }[]>`SELECT model_file FROM models WHERE model_file = ANY(${old})`
+            const usedUrls = new Set(used.map((m) => m.modelFile))
+            const unused = old.filter((url) => !usedUrls.has(url))
+            if (unused.length) await del(unused)
+            deleted += unused.length
+        } while (cursor)
+    }
 
     return Response.json({ deleted })
 }

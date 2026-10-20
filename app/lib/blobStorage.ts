@@ -26,12 +26,13 @@ function ownStoreHost(): string | null {
     return storeId ? `${storeId.toLowerCase()}.public.blob.vercel-storage.com` : null
 }
 
-// True only for files in OUR store under the given folder, so a request can't point a model at any other URL
+// True only for files in OUR store under the given folder, so a request can't point a model at any other URL.
+// If the store can't be worked out from the token, nothing is accepted.
 export function isOwnBlobUrl(url: string, folder: string): boolean {
     if (!isBlobUrl(url)) return false
     const { hostname, pathname } = new URL(url)
     const host = ownStoreHost()
-    return (host === null || hostname === host) && pathname.startsWith(`/${folder}/`)
+    return host !== null && hostname === host && pathname.startsWith(`/${folder}/`)
 }
 
 export async function putPublicFile(pathname: string, body: Buffer | ArrayBuffer | ReadableStream, contentType: string) {
