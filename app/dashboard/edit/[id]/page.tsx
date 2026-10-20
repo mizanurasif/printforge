@@ -7,6 +7,9 @@ import { authOptions } from '../../../lib/auth'
 import { getAllCategories } from '../../../lib/database/categories'
 import EditModelForm from '@/app/components/dashboard/EditModelForm'
 import { Model } from '@/app/lib/models'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Edit model' }
 import { getModelById } from '@/app/lib/database/database'
 
 export default async function EditModelPage({ params }: { params: Promise<{ id: string }> }) {

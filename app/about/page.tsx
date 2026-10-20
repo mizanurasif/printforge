@@ -1,6 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaCubes, FaUsers, FaGift } from 'react-icons/fa6'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'About' }
 
 // Renders of real models from the library, cut out on transparent backgrounds
 const mosaic = [

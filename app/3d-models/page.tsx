@@ -5,6 +5,9 @@ import ModelsBrowser from '../components/Model/ModelsBrowser';
 import { MODELS_PER_PAGE } from '../lib/constants';
 import { getmodelcount, getModels } from '../lib/database/database';
 import { ModelsPageProps } from '../lib/models';
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: '3D models' }
 
 export default async function Page({searchParams} : ModelsPageProps) {
   const search = (await searchParams).search?.toLowerCase() || '';

@@ -33,7 +33,7 @@ export default function ModelCard({ model }: ModelCardProps) {
                     <p className="text-[13px] text-muted">
                         by{' '}
                         {model.userId ? (
-                            <Link href={`/user/${model.userId}`} className="relative z-10 font-semibold text-ink hover:text-pink-ink hover:underline">
+                            <Link href={`/user/${model.userId}`} className="relative z-10 inline-block py-1 font-semibold text-ink hover:text-pink-ink hover:underline">
                                 {model.creatorName}
                             </Link>
                         ) : <b className="font-semibold text-ink">{model.creatorName}</b>}

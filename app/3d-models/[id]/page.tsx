@@ -1,5 +1,12 @@
 import type { Model, ModelDetailPageProps } from "@/app/lib/models"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
+
+export async function generateMetadata({ params }: ModelDetailPageProps): Promise<Metadata> {
+    const { id } = await params
+    const model = /^\d+$/.test(id) ? await getModelById(id).catch(() => null) : null
+    return model ? { title: model.name, description: model.description } : { title: 'Model not found' }
+}
 import { getModelById } from "@/app/lib/database/database"
 import Link from "next/link"
 import { FaDownload, FaPen } from "react-icons/fa6"
@@ -31,10 +38,10 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
         <ModelPreview image={model.image} modelFile={model.modelFile} name={model.name} />
 
         <section className="flex flex-col justify-center h-full">
-          <span className="mb-4 inline-block border border-line bg-white rounded-full px-3 py-1 text-sm text-muted w-fit"
-            role="status" aria-label="Category">
+          <Link href={`/3d-models/categories/${model.category}`} aria-label={`Category: ${categoryLabel(model.category)}`}
+            className="mb-4 inline-block border border-line bg-white rounded-full px-3 py-1 text-sm text-muted w-fit transition-colors hover:border-ink hover:text-ink">
             {categoryLabel(model.category)}
-          </span>
+          </Link>
           <h1 className="mb-3 text-4xl font-bold tracking-tight">{model.name}</h1>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-6 text-sm text-muted">

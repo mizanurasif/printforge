@@ -2,6 +2,9 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import RegisterForm from '../components/account/RegisterForm'
 import { authOptions } from '../lib/auth'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Create account' }
 
 export default async function RegisterPage() {
     const session = await getServerSession(authOptions)

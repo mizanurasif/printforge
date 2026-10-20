@@ -1,13 +1,17 @@
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { FaCircleCheck, FaCube, FaHeart, FaPlus, FaTrophy } from 'react-icons/fa6'
+import { FaCube, FaHeart, FaPlus, FaTrophy } from 'react-icons/fa6'
 import DeleteAccountButton from '../components/dashboard/DeleteAccountButton'
 import DeleteSuccessDialog from '../components/dashboard/DeleteSuccessDialog'
+import UploadedNotice from '../components/dashboard/UploadedNotice'
 import MyModelsTable from '../components/dashboard/MyModelsTable'
 import StatCard from '../components/dashboard/StatCard'
 import { authOptions } from '../lib/auth'
 import { getUserModelsByID } from '../lib/database/user'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'My account' }
 
 export default async function DashboardPage({ searchParams }: {
     searchParams: Promise<{ uploaded?: string, deleted?: string }>
@@ -38,15 +42,7 @@ export default async function DashboardPage({ searchParams }: {
         <main className="max-w-6xl px-4 py-10 mx-auto md:px-6">
             {deleted && <DeleteSuccessDialog key={deleted} name={deleted} />}
 
-            {uploaded && (
-                <div role="status" className="flex items-start gap-3 p-4 mb-6 text-sm text-green-800 border border-green-200 rounded-2xl bg-green-50">
-                    <FaCircleCheck className="mt-0.5 shrink-0" aria-hidden="true" />
-                    <p>
-                        <span className="font-semibold">&ldquo;{uploaded}&rdquo; was uploaded.</span>{' '}
-                        You&apos;ll find it in your models below.
-                    </p>
-                </div>
-            )}
+            {uploaded && <UploadedNotice key={uploaded} name={uploaded} />}
 
             {/* Header */}
             <section className="relative flex flex-col gap-4 p-6 mb-8 overflow-hidden rounded-3xl pastel-wash sm:flex-row sm:items-center sm:justify-between md:p-8">
@@ -71,8 +67,8 @@ export default async function DashboardPage({ searchParams }: {
                 <StatCard label="Models uploaded" value={totalModels} icon={<FaCube />} />
                 <StatCard label="Likes received" value={totalLikes.toLocaleString('en-US')} icon={<FaHeart />}
                     hint={totalModels ? `${Math.round(totalLikes / totalModels).toLocaleString('en-US')} per model on average` : undefined} />
-                <StatCard label="Most liked model" value={topModel ? topModel.name : '—'} icon={<FaTrophy />}
-                    hint={topModel ? `${topModel.likes.toLocaleString('en-US')} likes` : undefined} />
+                <StatCard label="Most liked model" value={topModel && topModel.likes > 0 ? topModel.name : 'No likes yet'} icon={<FaTrophy />}
+                    hint={topModel && topModel.likes > 0 ? `${topModel.likes.toLocaleString('en-US')} likes` : undefined} />
             </section>
 
             {/* My models */}

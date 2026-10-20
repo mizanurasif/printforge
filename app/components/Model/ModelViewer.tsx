@@ -68,6 +68,26 @@ async function retexture(model: THREE.Object3D, textures: Record<string, string>
     })
 }
 
+// AI-generated (2D to 3D) files are bare shapes: no normals, no material, so three.js draws them flat white,
+// which is almost invisible on the sky-blue background. Give them normals (so light shows the shape) and a clay colour.
+const CLAY = new THREE.Color('#8E88B8')
+function shadeUntextured(model: THREE.Object3D) {
+    model.traverse((obj) => {
+        if (!(obj instanceof THREE.Mesh)) return
+        if (!obj.geometry.getAttribute('normal')) obj.geometry.computeVertexNormals()
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
+        for (const material of materials) {
+            // Only the loader's default material: no texture, no vertex colours, plain white
+            if (material instanceof THREE.MeshStandardMaterial && !material.map && !material.vertexColors && material.color.equals(new THREE.Color(1, 1, 1))) {
+                material.color.copy(CLAY)
+                material.roughness = 0.65
+                material.metalness = 0   // the loader's default material is fully metallic, which looks flat without a texture
+                material.needsUpdate = true
+            }
+        }
+    })
+}
+
 // Only load this through ModelPreview (next/dynamic, ssr: false): WebGL doesn't exist on the server.
 // See docs/3D_VIEWER_GUIDE.md for what each numbered part does.
 // animate: play one of the file's animations, if it has any (see pickClip)
@@ -125,6 +145,7 @@ export default function ModelViewer({ src, name, animate = true, zoom = true, on
             const model = gltf.scene
             await retexture(model, JSON.parse(texturesKey))
             if (disposed) return
+            shadeUntextured(model)
             // If it has an animation, pickClip chooses one and an AnimationMixer plays it
             const clip = animate ? pickClip(gltf.animations) : undefined
             if (clip) {

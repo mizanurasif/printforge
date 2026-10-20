@@ -17,7 +17,6 @@ function CategoryBadge({ slug }: { slug: string }) {
     )
 }
 
-// Edit is a visual placeholder until that feature exists
 function RowActions({ id, name }: { id: number, name: string }) {
     const base = 'flex items-center justify-center w-8 h-8 rounded-xl transition-colors'
     return (
@@ -26,7 +25,7 @@ function RowActions({ id, name }: { id: number, name: string }) {
                 className={`${base} text-muted hover:bg-mist hover:text-pink-ink`}>
                 <FaEye />
             </Link>
-            <Link href={`/dashboard/edit/${id}`} aria-label={`Edit ${name}`} title="Edit (coming soon)"
+            <Link href={`/dashboard/edit/${id}`} aria-label={`Edit ${name}`} title="Edit"
                 className={`${base} text-muted hover:bg-mist hover:text-pink-ink`}>
                 <FaPen />
             </Link>

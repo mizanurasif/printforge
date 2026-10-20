@@ -10,6 +10,8 @@
   --color-ink: #17152B;
   --color-muted: #4A4E69;
   --color-line: rgb(23 21 43 / 0.1);
+  /* Edges of text boxes: at least 3:1 against white and the page backgrounds (WCAG 1.4.11) */
+  --color-field: #868AA0;
   --color-indigo: #3A3FA8;
   --color-pink: #E0507E;
   --color-pink-ink: #C8386A;
@@ -49,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
       disabled:opacity-60;
   }
   .input {
-    @apply w-full px-3.5 py-2.5 bg-white border rounded-xl border-line text-ink placeholder:text-muted/60
+    @apply w-full px-3.5 py-2.5 bg-white border rounded-xl border-field text-ink placeholder:text-muted/80
       focus:outline-2 focus:outline-indigo focus:outline-offset-0 focus:border-transparent;
   }
   .card {

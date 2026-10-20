@@ -5,45 +5,75 @@ import NavLink from './NavLink';
 import Logo from './Logo';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { FaRegCircleUser } from 'react-icons/fa6';
+import { useEffect, useState } from 'react';
+import { FaBars, FaRegCircleUser, FaXmark } from 'react-icons/fa6';
+
+// The links, shown in a row on wider screens and as a drop-down list behind the Menu button on phones
+function NavItems({ pathname, status }: { pathname: string, status: string }) {
+  return (
+    <>
+      <NavLink href="/3d-models" isActive={pathname.startsWith("/3d-models")}>3D Models</NavLink>
+      {/* Shown to everyone: logged-out users are sent to /login first (proxy.ts and the page check) */}
+      <NavLink href="/generate" isActive={pathname.startsWith("/generate")}>2D to 3D</NavLink>
+      <NavLink href="/about" isActive={pathname === "/about"}>About</NavLink>
+      {status === "authenticated" ? (
+        <>
+          <NavLink href="/dashboard" isActive={pathname.startsWith("/dashboard")}>
+            <span className="inline-flex items-center gap-1.5"><FaRegCircleUser aria-hidden="true" className="w-3.5 h-3.5" />My account</span>
+          </NavLink>
+          <li className="text-[12.5px] font-medium tracking-[0.06em] uppercase">
+            <button onClick={() => signOut({ callbackUrl: "/" })} className="py-1.5 text-[12.5px] font-medium tracking-[0.06em] uppercase border-b-2 border-transparent cursor-pointer text-muted transition-colors hover:text-ink">
+              Logout
+            </button>
+          </li>
+        </>
+      ) : status === "unauthenticated" ? (
+        <>
+          <NavLink href="/login" isActive={pathname === "/login"}>Login</NavLink>
+          <li>
+            <Link href="/register" className="btn-primary px-4 py-2 text-[12.5px] tracking-[0.06em] uppercase">Register</Link>
+          </li>
+        </>
+      ) : null}
+    </>
+  )
+}
 
 export default function Navbar(){
   const pathname = usePathname();
   const { status } = useSession();
+  const [open, setOpen] = useState(false);
+
+  // Close the phone menu with Esc (and when one of its links is clicked, below)
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open]);
+
   return(
   <>
       {/* Sticky, translucent bar so the pastel page shows through as you scroll */}
       <header className="sticky top-0 z-30 w-full border-b border-line bg-white/55 backdrop-blur-md">
-        <nav className="flex flex-wrap items-center justify-between max-w-7xl gap-x-6 gap-y-2 px-6 py-3.5 mx-auto">
+        <nav aria-label="Main" className="flex items-center justify-between max-w-7xl gap-x-6 px-4 sm:px-6 py-3 md:py-3.5 mx-auto">
           <Link href="/" aria-label="PrintForge home">
             <Logo />
           </Link>
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
-              <NavLink href="/3d-models" isActive={pathname.startsWith("/3d-models")}>3D Models</NavLink>
-              {/* Shown to everyone: logged-out users are sent to /login first (proxy.ts and the page check) */}
-              <NavLink href="/generate" isActive={pathname.startsWith("/generate")}>3D Construction</NavLink>
-              <NavLink href="/about" isActive={pathname === "/about"}>About</NavLink>
-              {status === "authenticated" ? (
-                <>
-                  <NavLink href="/dashboard" isActive={pathname.startsWith("/dashboard")}>
-                    <span className="inline-flex items-center gap-1.5"><FaRegCircleUser aria-hidden="true" className="w-3.5 h-3.5" />My account</span>
-                  </NavLink>
-                  <li className="text-[12.5px] font-medium tracking-[0.06em] uppercase">
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="py-1.5 text-[12.5px] font-medium tracking-[0.06em] uppercase border-b-2 border-transparent cursor-pointer text-muted transition-colors hover:text-ink">
-                      Logout
-                    </button>
-                  </li>
-                </>
-              ) : status === "unauthenticated" ? (
-                <>
-                  <NavLink href="/login" isActive={pathname === "/login"}>Login</NavLink>
-                  <li>
-                    <Link href="/register" className="btn-primary px-4 py-2 text-[12.5px] tracking-[0.06em] uppercase">Register</Link>
-                  </li>
-                </>
-              ) : null}
+          <ul className="items-center hidden md:flex gap-x-5">
+            <NavItems pathname={pathname} status={status} />
           </ul>
+          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="mobile-menu"
+            className="inline-flex items-center gap-2 px-3.5 min-h-11 text-sm font-semibold bg-white border rounded-full cursor-pointer md:hidden border-line text-ink">
+            {open ? <FaXmark aria-hidden="true" /> : <FaBars aria-hidden="true" />} Menu
+          </button>
         </nav>
+        {open && (
+          <ul id="mobile-menu" onClick={(e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false) }}
+            className="flex flex-col gap-1 px-6 pt-1 pb-4 border-t md:hidden border-line [&>li]:py-1">
+            <NavItems pathname={pathname} status={status} />
+          </ul>
+        )}
       </header>
    </>)
 } 

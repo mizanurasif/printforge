@@ -7,7 +7,7 @@ import { FaCloudArrowUp, FaHeart, FaXmark } from 'react-icons/fa6'
 import { deleteModelAction, uploadModel, type UploadState } from '@/app/dashboard/upload/actions'
 import { Category } from '@/app/lib/models'
 import ModelFileField, { ModelFileViewer, uploadModelFile } from './ModelFileField'
-import { shrinkImage } from './shrinkImage'
+import { checkImageFile, shrinkImage } from './shrinkImage'
 
 const initialState: UploadState = {}
 const NAME_MAX = 80
@@ -55,6 +55,7 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
     const [description, setDescription] = useState('')
     const [category, setCategory] = useState('')
     const [image, setImage] = useState<{ file: File, previewUrl: string } | null>(null)
+    const [imageError, setImageError] = useState<string | null>(null)
     const imageFile = image?.file ?? null
     const previewUrl = image?.previewUrl ?? null
     const [modelFile, setModelFile] = useState<{ file: File, url: string } | null>(null)
@@ -76,8 +77,11 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
     function handleUploadedImage(event: React.ChangeEvent<HTMLInputElement>)
     {
         const file = event.target.files?.[0] ?? null;
-        changeImage(file)
-  
+        event.target.value = ''   // so picking the same file again still fires onChange
+        if (!file) return
+        const problem = checkImageFile(file)
+        setImageError(problem)
+        if (!problem) changeImage(file)
     }
     // Free the previous preview's memory when the image changes or the page is left
     useEffect(() => {
@@ -130,7 +134,7 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
                                  />
                         </label>
                     )}
-                    <FieldError messages={state.fieldErrors?.image} />
+                    {imageError ? <FieldError messages={[imageError]} /> : <FieldError messages={state.fieldErrors?.image} />}
                 </div>
 
                 <ModelFileField file={modelFile?.file ?? null} onChange={changeModelFile} serverError={state.fieldErrors?.modelFile?.[0]} />
@@ -139,7 +143,7 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
                 <label className="block">
                     <span className="flex justify-between mb-1 text-sm font-medium">
                         Name
-                        <span className="font-normal text-muted/70">{name.length}/{NAME_MAX}</span>
+                        <span className="font-normal text-muted">{name.length}/{NAME_MAX}</span>
                     </span>
                     <input name="name" type="text" value={name} maxLength={NAME_MAX} placeholder="E.g. Articulated Dragon"
                         onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -150,7 +154,7 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
                 <label className="block">
                     <span className="flex justify-between mb-1 text-sm font-medium">
                         Description
-                        <span className="font-normal text-muted/70">{description.length}/{DESCRIPTION_MAX}</span>
+                        <span className="font-normal text-muted">{description.length}/{DESCRIPTION_MAX}</span>
                     </span>
                     <textarea name="description" rows={5} value={description} maxLength={DESCRIPTION_MAX}
                         placeholder="What is it, how does it print, any supports needed?"
@@ -197,7 +201,7 @@ export default function UploadModelForm({ categories, directUpload = false }: { 
                         <img src={previewUrl ?? PLACEHOLDER_IMAGE} alt="" className="object-cover w-full aspect-square bg-model-bg" />
                     )}
                     <div className="p-4">
-                        <h3 className="text-xl font-semibold text-ink line-clamp-2">{name || 'Model name'}</h3>
+                        <h2 className="text-xl font-semibold text-ink line-clamp-2">{name || 'Model name'}</h2>
                         <p className="mt-2 text-sm text-ink line-clamp-2">{description || 'Your description will appear here.'}</p>
                         <span className="inline-block px-3 py-1 mt-2 text-sm text-ink border border-line rounded-full">
                             {categoryLabel ?? 'Category'}

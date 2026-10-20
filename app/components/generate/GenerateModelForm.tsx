@@ -216,7 +216,7 @@ export default function GenerateModelForm({ categories }: { categories: Category
                         <label className="block">
                             <span className="flex justify-between mb-1 text-sm font-medium">
                                 Name
-                                <span className="font-normal text-muted/70">{name.length}/{NAME_MAX}</span>
+                                <span className="font-normal text-muted">{name.length}/{NAME_MAX}</span>
                             </span>
                             <input name="name" type="text" value={name} maxLength={NAME_MAX} placeholder="E.g. Ceramic Teapot" autoFocus
                                 onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -226,7 +226,7 @@ export default function GenerateModelForm({ categories }: { categories: Category
                         <label className="block">
                             <span className="flex justify-between mb-1 text-sm font-medium">
                                 Description
-                                <span className="font-normal text-muted/70">{description.length}/{DESCRIPTION_MAX}</span>
+                                <span className="font-normal text-muted">{description.length}/{DESCRIPTION_MAX}</span>
                             </span>
                             <textarea name="description" rows={4} value={description} maxLength={DESCRIPTION_MAX}
                                 placeholder="What is it, and any tips for printing it?"

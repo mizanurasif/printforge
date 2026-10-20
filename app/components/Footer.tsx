@@ -14,7 +14,7 @@ const columns = [
         title: 'Create',
         links: [
             { href: '/dashboard/upload', label: 'Upload a model' },
-            { href: '/dashboard', label: 'Dashboard' },
+            { href: '/dashboard', label: 'My account' },
             { href: '/register', label: 'Create an account' },
         ],
     },
@@ -23,7 +23,7 @@ const columns = [
         links: [
             { href: '/about', label: 'About' },
             // CC-BY models require their authors to be credited wherever they're shown
-            { href: '/models/SOURCES.md', label: '3D model credits' },
+            { href: '/credits', label: '3D model credits' },
         ],
     },
 ]
@@ -44,10 +44,10 @@ export default function Footer() {
                 {columns.map((column) => (
                     <nav key={column.title} aria-label={column.title}>
                         <h2 className="mb-3.5 text-xs font-bold tracking-[0.1em] uppercase">{column.title}</h2>
-                        <ul className="space-y-2">
+                        <ul className="space-y-0.5">
                             {column.links.map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-sm transition-colors text-muted hover:text-pink-ink">
+                                    <Link href={link.href} className="inline-block py-1.5 text-sm transition-colors text-muted hover:text-pink-ink">
                                         {link.label}
                                     </Link>
                                 </li>

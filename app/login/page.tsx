@@ -2,6 +2,9 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import LoginForm from '../components/account/LoginForm'
 import { authOptions } from '../lib/auth'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Log in' }
 
 export default async function LoginPage({ searchParams }: {
     searchParams: Promise<{ callbackUrl?: string, registered?: string }>
