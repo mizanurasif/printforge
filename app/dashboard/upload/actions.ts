@@ -67,7 +67,12 @@ export async function uploadModel(_prevState: UploadState, formData: FormData): 
         return { fieldErrors }
     }
 
-    const savedImage = image instanceof File && image.size > 0 ? await saveImage(image) : null
+    let savedImage: string | null = null
+    try {
+        if (image instanceof File && image.size > 0) savedImage = await saveImage(image)
+    } catch {
+        return { fieldErrors: { image: ['This image could not be saved. Try a different picture.'] } }
+    }
 
     let modelId: number
     try {

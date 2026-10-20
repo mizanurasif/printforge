@@ -24,7 +24,7 @@ and I wrapped it in a Promise so the forms can await it and show the server's er
 // straight from the browser to Blob storage, and only its URL is sent to the route, which checks it before keeping it.
 export async function uploadModelFile(modelId: number, file: File, onProgress: (percent: number) => void, direct = false): Promise<void> {
     if (direct) {
-        const blob = await upload(`models/${modelId}.glb`, file, {
+        const blob = await upload(`models/m${modelId}/model.glb`, file, {
             access: 'public',
             handleUploadUrl: '/api/models/upload-token',
             contentType: 'model/gltf-binary',

@@ -18,8 +18,11 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
     let model: Model
     try {
         model = await getModelById(id, Number(session?.user.id) || undefined)
-    } catch {
-        notFound()
+    } catch (error) {
+        // getModelById throws "Model with id … not found" for a missing row; anything else (e.g. the database
+        // being down) goes to app/error.tsx instead of pretending the model doesn't exist
+        if (error instanceof Error && /not found/i.test(error.message)) notFound()
+        throw error
     }
     const isOwner = session && model.userId === Number(session.user.id)
     return (
@@ -60,7 +63,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
             {/* A file in /public downloads with a plain "download" link. Browsers ignore "download" for files on
                 another site (Vercel Blob), so those ask Blob for a download with ?download=1 instead */}
             {model.modelFile && (
-              <a href={model.modelFile.startsWith('https://') ? `${model.modelFile}?download=1` : model.modelFile}
+              <a href={model.modelFile.startsWith('https://') ? `${model.modelFile}${model.modelFile.includes('?') ? '&' : '?'}download=1` : model.modelFile}
                 download={`${model.name.trim().replace(/[^\w-]+/g, '-')}.glb`}
                 className="btn-primary min-h-12 px-6">
                 <FaDownload aria-hidden="true" /> Download .glb

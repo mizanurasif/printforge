@@ -91,10 +91,17 @@ export async function deleteModelFile(modelFile: string | null) {
 // (/api/models/upload-token hands out the permission), then sends us only its URL.
 export const BLOB_MODELS_FOLDER = 'models'
 
-// Checks a .glb the browser put in our Blob store: right place, really a glTF 2.0 file, complete and not too big.
-// Returns the URL to store, or throws a ModelFileError (and deletes the file) when something is wrong.
-export async function checkUploadedModelFile(url: unknown): Promise<string> {
-    if (typeof url !== 'string' || !isOwnBlobUrl(url, BLOB_MODELS_FOLDER)) throw new ModelFileError('The 3D model is missing')
+// Every Blob .glb is filed under who it belongs to, so one user can't attach (and later delete) another user's file:
+// - models/m<modelId>/…  a file uploaded for that model (the upload token is only given to the model's owner)
+// - models/g<userId>/…   a 2D to 3D result, made before the model exists
+export function modelFileFolder(owner: { modelId: number } | { userId: number }) {
+    return 'modelId' in owner ? `${BLOB_MODELS_FOLDER}/m${owner.modelId}` : `${BLOB_MODELS_FOLDER}/g${owner.userId}`
+}
+
+// Checks a .glb in our Blob store: filed under this owner, really a glTF 2.0 file, complete and not too big.
+// Returns the URL to store, or throws a ModelFileError when something is wrong (and deletes a broken file).
+export async function checkUploadedModelFile(url: unknown, owner: { modelId: number } | { userId: number }): Promise<string> {
+    if (typeof url !== 'string' || !isOwnBlobUrl(url, modelFileFolder(owner))) throw new ModelFileError('The 3D model is missing')
     const info = await readBlobHeader(url)
     if (!info) throw new ModelFileError('The 3D model is missing')
     try {
@@ -108,8 +115,8 @@ export async function checkUploadedModelFile(url: unknown): Promise<string> {
     return url
 }
 
-// Saves a .glb the server already holds in memory (a generated model) to Blob storage
-export async function putModelFile(glb: ArrayBuffer): Promise<string> {
+// Saves a .glb the server already holds in memory (a 2D to 3D result) to Blob storage, filed under its user
+export async function putModelFile(glb: ArrayBuffer, userId: number): Promise<string> {
     checkHeader(Buffer.from(glb.slice(0, 12)))
-    return putPublicFile(`${BLOB_MODELS_FOLDER}/generated.glb`, glb, 'model/gltf-binary')
+    return putPublicFile(`${modelFileFolder({ userId })}/generated.glb`, glb, 'model/gltf-binary')
 }

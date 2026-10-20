@@ -36,24 +36,29 @@ function takeSnapshot(canvas: HTMLCanvasElement, onSnapshot: (image: Blob) => vo
 // Replaces the colour map of every material whose name contains a key of `textures`.
 // glTF textures aren't flipped (flipY = false), so replacement images must be stored the same way up as the file's own.
 // The file's glow (emissive) map is kept but tinted soft pink, so its original colours don't show through the new ones.
-function retexture(model: THREE.Object3D, textures: Record<string, string>) {
+// Each replacement is swapped in only once it has loaded; if one fails, those materials keep their original map.
+async function retexture(model: THREE.Object3D, textures: Record<string, string>) {
     const entries = Object.entries(textures)
     if (!entries.length) return
     const loader = new THREE.TextureLoader()
-    const cache = new Map<string, THREE.Texture>()
+    const loaded = new Map<string, THREE.Texture>()
+    await Promise.all(entries.map(async ([, url]) => {
+        try {
+            const texture = await loader.loadAsync(url)
+            texture.flipY = false
+            texture.colorSpace = THREE.SRGBColorSpace
+            loaded.set(url, texture)
+        } catch (err: unknown) {
+            console.error(`Couldn't load texture ${url}; keeping the original`, err)
+        }
+    }))
     model.traverse((obj) => {
         if (!(obj instanceof THREE.Mesh)) return
         const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
         for (const material of materials) {
             const match = entries.find(([key]) => material.name.includes(key))
-            if (!match || !(material instanceof THREE.MeshStandardMaterial)) continue
-            let texture = cache.get(match[1])
-            if (!texture) {
-                texture = loader.load(match[1])
-                texture.flipY = false
-                texture.colorSpace = THREE.SRGBColorSpace
-                cache.set(match[1], texture)
-            }
+            const texture = match && loaded.get(match[1])
+            if (!texture || !(material instanceof THREE.MeshStandardMaterial)) continue
             material.map?.dispose()
             material.map = texture
             material.emissive.set(0xffc2d8)
@@ -115,10 +120,11 @@ export default function ModelViewer({ src, name, animate = true, zoom = true, on
         let snapshotPending = false
 
         // 4. Load the file, then centre it and move the camera back until it fits
-        new GLTFLoader().load(src, (gltf) => {
+        new GLTFLoader().load(src, async (gltf) => {
             if (disposed) return
             const model = gltf.scene
-            retexture(model, JSON.parse(texturesKey))
+            await retexture(model, JSON.parse(texturesKey))
+            if (disposed) return
             // If it has an animation, pickClip chooses one and an AnimationMixer plays it
             const clip = animate ? pickClip(gltf.animations) : undefined
             if (clip) {
