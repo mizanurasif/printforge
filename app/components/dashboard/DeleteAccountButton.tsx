@@ -60,7 +60,7 @@ export default function DeleteAccountButton() {
                                 <span className="block mb-1 text-sm font-medium">Enter your password to confirm</span>
                                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                                     autoComplete="current-password" required autoFocus
-                                    className="w-full px-3 py-2 border border-line rounded-xl focus:outline-red-500" />
+                                    className="input focus:outline-red-500" />
                             </label>
                             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
                         </div>

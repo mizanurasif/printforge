@@ -1,5 +1,5 @@
 import Form from 'next/form'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { TransitionStartFunction } from 'react'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 
@@ -9,10 +9,16 @@ export default function SearchForm({search,startTransition}:{
 }){
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   function handleSearch(formData:FormData){
     const search = formData.get("search")?.toString().trim() || ""
-    const url = search ? `${pathname}?search=${encodeURIComponent(search)}` : pathname 
+    // Keep the chosen sort; a new search starts again at page 1
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    const sort = searchParams.get('sort')
+    if (sort) params.set('sort', sort)
+    const url = params.size ? `${pathname}?${params}` : pathname
     startTransition(()=>{
       router.push(url)
     })
@@ -32,7 +38,7 @@ export default function SearchForm({search,startTransition}:{
         aria-label="Search models"
         placeholder="Search models, e.g. dragon"
         autoComplete="off"
-        className="w-full py-3 pr-5 text-sm bg-white border rounded-full pl-12 placeholder:text-muted/70 border-line shadow-[0_10px_24px_-20px_rgb(23_21_43/0.5)] focus:outline-2 focus:outline-indigo md:text-base"
+        className="w-full py-3 pr-5 text-sm bg-white border rounded-full pl-12 placeholder:text-muted/80 border-field shadow-[0_10px_24px_-20px_rgb(23_21_43/0.5)] focus:outline-2 focus:outline-indigo md:text-base"
       />
     </Form>
   )

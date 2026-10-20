@@ -36,3 +36,12 @@ export async function shrinkImage(file: File, limitBytes = 3 * 1024 * 1024): Pro
     }
     return file   // the server still checks the size and says if it's too big
 }
+
+// Quick check when a picture is chosen, so a wrong file is refused right away (the server checks again)
+const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
+export const MAX_IMAGE_MB = 5
+export function checkImageFile(file: File): string | null {
+    if (!IMAGE_TYPES.includes(file.type)) return 'Choose a PNG, JPG or WebP image'
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024) return `Image must be ${MAX_IMAGE_MB}MB or smaller`
+    return null
+}
